@@ -1,0 +1,9 @@
+[tool.ruff]
+indent-width = 4
+line-length = 79
+
+[tool.ruff.format]
+docstring-code-format = true
+indent-style = "space"
+quote-style = "double"
+skip-magic-trailing-comma = true
