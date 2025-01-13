@@ -6,10 +6,10 @@ database.
 ## Planned features
 
 While this project uses English for development, the user-facing web application
-will be implemented in Finnish and using the Finnish Public Libraries
-Classification System if possible during the course. The system is available in
-XML, but parsing it into the application might not be worth it within the scope
-of this application.
+will be implemented in Finnish and using the
+[Finnish Public Libraries Classification System](https://finto.fi/ykl/fi/) if
+possible during the course. The system is available in XML, but parsing it into
+the application might not be worth it within the scope of this application.
 
 - [ ] The user can create an account and log in.
 - [ ] Only some information of the user libraries are shown without logging. As
