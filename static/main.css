@@ -57,3 +57,62 @@ body {
   clip: auto;
   white-space: normal;
 }
+
+.container {
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+@media (min-width: 640px) {
+  .container {
+    max-width: 36rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    max-width: 42rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: 56rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container {
+    max-width: 70rem;
+  }
+}
+
+.main-header-wrapper {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.main-header h1,
+.main-header a.title {
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+.main-header a.title:hover,
+.main-header a.title:focus {
+  text-decoration: underline;
+}
+
+.main-header .links {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1rem;
+}

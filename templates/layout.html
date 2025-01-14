@@ -14,6 +14,18 @@
   </head>
   <body>
     <a class="sr-only" href="#main">Siirry sisältöön</a>
+    <header class="main-header-wrapper">
+      <div class="container main-header">
+        {% if is_home -%}
+        <h1>{{- site.title -}}</h1>
+        {%- else -%}
+        <a class="title" href="/">{{- site.title -}}</a>
+        {%- endif -%}
+        <div class="links">
+          <a href="/">Rekisteröidy</a><a href="/">Kirjaudu</a>
+        </div>
+      </div>
+    </header>
     <main id="main">{% block content %}{% endblock %}</main>
   </body>
 </html>
