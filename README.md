@@ -46,6 +46,31 @@ Install dependencies.
 
     pip install -r requirements.txt
 
+Before starting the server, you need to initalize the database. First create the
+database tables.
+
+    sqlite3 database.db < schema.sql
+
+After that, you need to insert the values for classification. The data for the
+`classification` and `class_index_words` tables is parsed from the data for the
+Finnish Public Libraries Classification System using a utility script at
+[scripts/gen_sql_init.py](scripts/gen_sql_init.py). The script generates the SQL
+statements for inserting the data and outputs it to stdout.
+
+    ./scripts/gen_sql_init.py | sqlite3 database.db
+
+If running the script fail, this may be due to insufficient permissions. Fix
+this by running:
+
+    chmod +x ./scripts/gen_sql_init.py
+
+Running untrusted statements is a bad idea, so you can first redirect the output
+to a file for inspecting.
+
+    ./scripts/gen_sql_init.py > init.sql
+
+Running the statements takes a while. It runs 26,625 statements in total.
+
 Start the local server.
 
     flask run
