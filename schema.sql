@@ -3,7 +3,7 @@ CREATE TABLE users (
   username TEXT UNIQUE,
   display_name TEXT,
   password_hash TEXT
-)
+);
 
 -- The table classification uses nested set model for representing the tree in
 -- the database. This is choice is done for two reasons:
@@ -20,7 +20,7 @@ CREATE TABLE classification (
   label TEXT,
   lft INTEGER NOT NULL,
   rgt INTEGER NOT NULL
-)
+);
 
 -- The table class_index_words maps the index words for a class to the class.
 -- NOTE: The `label` is duplicated into this table by design: it is in
@@ -30,4 +30,4 @@ CREATE TABLE class_index_words (
   id INTEGER PRIMARY KEY,
   class_id INTEGER REFERENCES classification,
   word TEXT
-)
+);
