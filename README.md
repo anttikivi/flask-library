@@ -50,6 +50,9 @@ Start the local server.
 
     flask run
 
+The application should now be accessible at
+[`127.0.0.1:5000`](http://127.0.0.1:5000)!
+
 ## Development
 
 This project uses [Ruff](https://docs.astral.sh/ruff/) for linting and
