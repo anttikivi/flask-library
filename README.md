@@ -88,3 +88,10 @@ Copyright (c) 2025 Antti Kivi
 
 This project is licensed under the MIT License. Please see the
 [LICENSE](LICENSE) file for more information.
+
+This repository also contains the data for the PLC - Finnish Public Libraries
+Classification System. The data is stored at
+[scripts/ykl-skos.rdf.xmp](scripts/ykl-skos.rdf.xmp). This data is released into
+the public domain under
+[CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/). Please
+visit the [website](https://finto.fi/ykl/fi/) for the PLC for more information.
