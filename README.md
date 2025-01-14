@@ -32,6 +32,53 @@ implemented.
 - [ ] When logged in, the user can marks books as read.
 - [ ] When logged in, the user can comment on other people’s libraries.
 
+## Getting Started
+
+This project uses Python and
+[Flask](https://flask.palletsprojects.com/en/stable/) as the main framework.
+Please make sure you have at least Python 3.9 installed.
+
+Start by creating a new Python virtual environment.
+
+    python -m venv venv && source ./venv/bin/activate
+
+Install dependencies.
+
+    pip install -r requirements.txt
+
+Start the local server.
+
+    flask run
+
+## Development
+
+This project uses [Ruff](https://docs.astral.sh/ruff/) for linting and
+formatting code as it is faster than many of the alternatives. You can install
+Ruff either to you local virtual environment or globally using
+[pipx](https://github.com/pypa/pipx). To install it in your virtual environment,
+make sure you have first enabled it (by running `source ./venv/bin/activate`).
+
+    pip install ruff
+
+To install it globally using pipx, you need to, of course, have pipx installed.
+Then you can run:
+
+    pipx install ruff
+
+Please consult the
+[Ruff documentation](https://docs.astral.sh/ruff/installation/) for other
+installation methods.
+
+The linter and formatter settings for this project are defined in
+[`pyproject.toml`](pyproject.toml) as you would expect. Thus, to lint the code,
+you can run:
+
+    ruff check
+
+To format the code:
+
+    ruff format
+
 ## License
 
 Copyright (c) 2025 Antti Kivi
