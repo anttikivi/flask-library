@@ -135,14 +135,16 @@ if __name__ == "__main__":
         rgt = current_lft
         current_lft += 1
 
+        label = node.label.replace("'", "''")
         lines.append(
-            f"INSERT INTO classification (key, label, lft, rgt) VALUES ('{node.key}', '{node.label}', {lft}, {rgt});"
+            f"INSERT INTO classification (key, label, lft, rgt) VALUES ('{node.key}', '{label}', {lft}, {rgt});"
         )
 
         word_lines.append(
-            f"INSERT INTO class_index_words (class_id, word) VALUES ((SELECT id FROM classification WHERE key = '{node.key}'), '{node.label}');"
+            f"INSERT INTO class_index_words (class_id, word) VALUES ((SELECT id FROM classification WHERE key = '{node.key}'), '{label}');"
         )
         for word in node.alts:
+            word = word.replace("'", "''")
             word_lines.append(
                 f"INSERT INTO class_index_words (class_id, word) VALUES ((SELECT id FROM classification WHERE key = '{node.key}'), '{word}');"
             )
