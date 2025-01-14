@@ -86,5 +86,5 @@ To format the code:
 
 Copyright (c) 2025 Antti Kivi
 
-This project is licensed under the MIT license. Please see the
+This project is licensed under the MIT License. Please see the
 [LICENSE](LICENSE) file for more information.
