@@ -13,6 +13,7 @@
     <link href="/static/main.css" rel="stylesheet" />
   </head>
   <body>
-    {% block content %}{% endblock %}
+    <a class="sr-only" href="#main">Siirry sisältöön</a>
+    <main id="main">{% block content %}{% endblock %}</main>
   </body>
 </html>
