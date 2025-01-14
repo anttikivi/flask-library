@@ -5,7 +5,7 @@ CREATE TABLE users (
   password_hash TEXT
 )
 
--- The table classification uses Nested set model for representing the tree in
+-- The table classification uses nested set model for representing the tree in
 -- the database. This is choice is done for two reasons:
 -- 1. This model can be efficient when the tree is quite deep and read ofter.
 --    While there is not *really* that many classes in the classification, but
