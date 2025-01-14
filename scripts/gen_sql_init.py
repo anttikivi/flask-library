@@ -121,32 +121,44 @@ if __name__ == "__main__":
             root_classes.append(ykl_class)
 
     lines: list[str] = []
+    word_lines: list[str] = []
 
     # Align the boundaries for the database.
 
-    def populate_output(node: YKLClass, current_lft: int) -> int:
+    def populate_sql_lines(node: YKLClass, current_lft: int) -> int:
         lft = current_lft
         current_lft += 1
 
         for child in node.subclasses:
-            current_lft = populate_output(child, current_lft)
+            current_lft = populate_sql_lines(child, current_lft)
 
         rgt = current_lft
         current_lft += 1
 
-        sql: str = f"INSERT INTO classification (key, label, lft, rgt) VALUES ('{node.key}', '{node.label}', {lft}, {rgt});"
-        lines.append(sql)
+        lines.append(
+            f"INSERT INTO classification (key, label, lft, rgt) VALUES ('{node.key}', '{node.label}', {lft}, {rgt});"
+        )
+
+        word_lines.append(
+            f"INSERT INTO class_index_words (class_id, word) VALUES ((SELECT id FROM classification WHERE key = '{node.key}'), '{node.label}');"
+        )
+        for word in node.alts:
+            word_lines.append(
+                f"INSERT INTO class_index_words (class_id, word) VALUES ((SELECT id FROM classification WHERE key = '{node.key}'), '{word}');"
+            )
 
         return current_lft
 
     current_lft = 1
     for ykl_class in root_classes:
-        current_lft = populate_output(ykl_class, current_lft)
+        current_lft = populate_sql_lines(ykl_class, current_lft)
 
     lines.sort()
+    word_lines.sort()
 
     output: str = "DELETE FROM classification;\n\n"
-    sql = "\n".join(lines) + "\n"
-    output = f"{output}{sql}"
+    sql = "\n".join(lines) + "\n\n"
+    words_sql = "\n".join(word_lines) + "\n"
+    output = f"{output}{sql}{words_sql}"
 
     print(output)
