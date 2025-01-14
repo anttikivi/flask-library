@@ -11,39 +11,39 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.9", "3.10", "3.11", "3.12"]
-    
+
     steps:
-    - name: Clone the source code
-      uses: actions/checkout@v4.2.2
+      - name: Clone the source code
+        uses: actions/checkout@v4.2.2
 
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5.3.0
-      with:
-        python-version: ${{ matrix.python-version }}
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5.3.0
+        with:
+          python-version: ${{ matrix.python-version }}
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        python -m pip install -r requirements.txt
-        pip install ruff
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+          pip install ruff
 
-    - name: Lint the code
-      run: |
-        ruff check $(git ls-files '*.py')
+      - name: Lint the code
+        run: |
+          ruff check $(git ls-files '*.py')
 
-    - name: Check the code formatting
-      run: |
-        STATUS=0
-        assert-nothing-changed() {
-          local diff
-          "$@" >/dev/null || return 1
-          if ! diff="$(git diff -U1 --color --exit-code)"; then
-            printf '\e[31mError: running `\e[1m%s\e[22m` results in modifications that you must check into version control:\e[0m\n%s\n\n' "$*" "$diff" >&2
-            git checkout -- .
-            STATUS=1
-          fi
-        }
+      - name: Check the code formatting
+        run: |
+          STATUS=0
+          assert-nothing-changed() {
+            local diff
+            "$@" >/dev/null || return 1
+            if ! diff="$(git diff -U1 --color --exit-code)"; then
+              printf '\e[31mError: running `\e[1m%s\e[22m` results in modifications that you must check into version control:\e[0m\n%s\n\n' "$*" "$diff" >&2
+              git checkout -- .
+              STATUS=1
+            fi
+          }
 
-        assert-nothing-changed ruff format $(git ls-files '*.py')
+          assert-nothing-changed ruff format $(git ls-files '*.py')
 
-        exit $STATUS
+          exit $STATUS
