@@ -124,7 +124,19 @@ h6 {
 .main-header h1,
 .main-header a.title {
   font-weight: bold;
+  font-family: var(--font-serif);
   font-size: 1.5rem;
+  text-decoration: none;
+}
+
+.main-header a.title {
+  color: var(--color-gray-900);
+}
+
+@media (prefers-color-scheme: dark) {
+  .main-header a.title {
+    color: var(--color-gray-100);
+  }
 }
 
 .main-header a.title:hover,
