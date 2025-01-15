@@ -14,7 +14,7 @@ app.secret_key = os.environ["SECRET_KEY"]
 context = {"site": {"subtitle": "Kirjat purkissa", "title": "Flask-kirjasto"}}
 
 
-@app.route("/")
+@app.route("/", methods=["GET"])
 def index() -> str:
     return render_template("index.html", **context, is_home=True)
 
