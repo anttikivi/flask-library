@@ -1,5 +1,36 @@
 {% extends "layout.html" %}
+
 {% block title %}Luo tili{% endblock %}
+
 {% block content %}
-  <h1>Rekisteröidy</h1>
+  <div class="container">
+    <h1 class="page-title">Rekisteröidy</h1>
+    <p class="register-intro">
+      Tervetuloa Flask-kirjastoon. Olet vain Flask-kirjasto-tunnuksen luomisen
+      päässä elämäsi kirjastonhoitokokemuksesta. Kaikki kentät ovat pakollisia.
+    </p>
+    <div class="register-form-wrapper">
+      <form class="register-form" action="/create-user" method="POST">
+        <div>
+          <label for="username">
+            <span>Käyttäjänimi</span>
+            <input id="username" name="username" type="text" />
+          </label>
+        </div>
+        <div>
+          <label for="password">
+            <span>Salasana</span>
+            <input id="password" name="password" type="password" />
+          </label>
+        </div>
+        <div>
+          <label for="password_again">
+            <span>Salasana uudelleen</span>
+            <input id="password_again" name="password_again" type="password" />
+          </label>
+        </div>
+        <button type="submit">Luo tunnus</button>
+      </form>
+    </div>
+  </div>
 {% endblock %}
