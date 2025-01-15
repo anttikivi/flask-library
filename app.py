@@ -1,5 +1,6 @@
-from flask import Flask, render_template
 import os
+from flask import Flask, flash, redirect, render_template, request
+from werkzeug.wrappers import Response
 
 import env
 
@@ -19,3 +20,16 @@ def index() -> str:
 @app.route("/luo-tili/")
 def register() -> str:
     return render_template("register.html", **context)
+
+
+@app.route("/create-user", methods=["POST"])
+def create_user() -> Response:
+    username = request.form["username"]
+    password = request.form["password"]
+    password_again = request.form["password_again"]
+
+    if password != password_again:
+        flash("Salasanat eivät täsmää", "error")
+        return redirect("/luo-tili/")
+    # TODO: Redirect to the user page.
+    return redirect("/")

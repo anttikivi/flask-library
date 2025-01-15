@@ -3,6 +3,8 @@
   --color-gray-900: #1c1917;
   --color-purple-400: #e879f9;
   --color-purple-700: #a21caf;
+  --color-red-400: #f87171;
+  --color-red-700: #b91c1c;
   --font-sans: Inter, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
     "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --font-serif: "Crimson Text", ui-serif, Georgia, Cambria, "Times New Roman",
@@ -132,6 +134,42 @@ input {
   }
 }
 
+.flashes {
+  margin: 1rem auto;
+  list-style: none;
+  text-align: center;
+}
+
+.flashes .error {
+  color: var(--color-red-700);
+}
+
+@media (prefers-color-scheme: dark) {
+  .flashes .error {
+    color: var(--color-red-400);
+  }
+}
+
+.label-error span {
+  color: var(--color-red-700);
+}
+
+@media (prefers-color-scheme: dark) {
+  .label-error span {
+    color: var(--color-red-400);
+  }
+}
+
+.label-error input {
+  border-color: var(--color-red-700) !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  .label-error input {
+    border-color: var(--color-red-400) !important;
+  }
+}
+
 .main-header-wrapper {
   padding-top: 2rem;
   padding-bottom: 2rem;
@@ -228,12 +266,12 @@ input {
 }
 
 .register-form > div label input:focus {
-  border-color: var(--color-purple-700);
+  border-color: var(--color-purple-700) !important;
 }
 
 @media (prefers-color-scheme: dark) {
   .register-form > div label input:focus {
-    border-color: var(--color-purple-400);
+    border-color: var(--color-purple-400) !important;
   }
 }
 

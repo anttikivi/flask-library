@@ -11,25 +11,45 @@
     </p>
     <div class="register-form-wrapper">
       <form class="register-form" action="/create-user" method="POST">
-        <div>
-          <label for="username">
-            <span>Käyttäjänimi</span>
-            <input id="username" name="username" type="text" />
-          </label>
-        </div>
-        <div>
-          <label for="password">
-            <span>Salasana</span>
-            <input id="password" name="password" type="password" />
-          </label>
-        </div>
-        <div>
-          <label for="password_again">
-            <span>Salasana uudelleen</span>
-            <input id="password_again" name="password_again" type="password" />
-          </label>
-        </div>
-        <button type="submit">Luo tunnus</button>
+        {% with errors = get_flashed_messages(category_filter=["error"]) %}
+          {% if errors %}
+            <h2 class="sr-only">Lomakkeessa olleet virheet</h2>
+            <ul class="flashes">
+              {% for msg in errors %}
+                <li class="error">{{ msg }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+          <div>
+            <label for="username">
+              <span>Käyttäjänimi</span>
+              <input id="username" name="username" type="text" />
+            </label>
+          </div>
+          <div>
+            <label
+              {{ ' class="label-error"' | safe if "salasana" in errors | first | lower else "" }}
+              for="password"
+            >
+              <span>Salasana</span>
+              <input id="password" name="password" type="password" />
+            </label>
+          </div>
+          <div>
+            <label
+              {{ ' class="label-error"' | safe if "salasana" in errors | first | lower else "" }}
+              for="password_again"
+            >
+              <span>Salasana uudelleen</span>
+              <input
+                id="password_again"
+                name="password_again"
+                type="password"
+              />
+            </label>
+          </div>
+          <button type="submit">Luo tunnus</button>
+        {% endwith %}
       </form>
     </div>
   </div>
