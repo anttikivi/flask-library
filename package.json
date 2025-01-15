@@ -1,0 +1,12 @@
+{
+  "name": "flask-library",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "format": "prettier --write \"**/*.{html,md}\""
+  },
+  "devDependencies": {
+    "prettier": "^3.4.2",
+    "prettier-plugin-jinja-template": "^2.0.0"
+  }
+}

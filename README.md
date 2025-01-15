@@ -81,8 +81,8 @@ The application should now be accessible at
 ## Development
 
 This project uses [Ruff](https://docs.astral.sh/ruff/) for linting and
-formatting code as it is faster than many of the alternatives. You can install
-Ruff either to you local virtual environment or globally using
+formatting code Python code as it is faster than many of the alternatives. You
+can install Ruff either to you local virtual environment or globally using
 [pipx](https://github.com/pypa/pipx). To install it in your virtual environment,
 make sure you have first enabled it (by running `source ./venv/bin/activate`).
 
@@ -106,6 +106,18 @@ you can run:
 To format the code:
 
     ruff format
+
+For formatting the Jinja2 template files (files in [`/templates`](templates)),
+you can use [Prettier](https://prettier.io). I was also annoyed by the
+formatting decisions that the HTML language server I use did with the Jinja2
+files thinking that they are HTML, so I let Prettier take over formatting with
+its Jinja2 plugin. First install the packages.
+
+    npm install
+
+Then run the formatter.
+
+    npm run format
 
 ## License
 

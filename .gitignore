@@ -1,19 +1,11 @@
-# Personal Prettier config and script to format the README.
-.prettierrc
-format-readme
-
-# Databases
 *.db
 
-# Generated files
 init.sql
 
-# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
 
-# Environments
 .env
 .venv
 env/
@@ -21,3 +13,5 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+
+node_modules/
