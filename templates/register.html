@@ -21,7 +21,10 @@
             </ul>
           {% endif %}
           <div>
-            <label for="username">
+            <label
+              {{ ' class="label-error"' | safe if "käyttäjä" in errors | first | lower else "" }}
+              for="username"
+            >
               <span>Käyttäjänimi</span>
               <input id="username" name="username" type="text" />
             </label>

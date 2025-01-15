@@ -3,6 +3,7 @@ from flask import Flask, flash, redirect, render_template, request
 from werkzeug.wrappers import Response
 
 import env
+import users
 
 env.read_env_file()
 
@@ -31,5 +32,10 @@ def create_user() -> Response:
     if password != password_again:
         flash("Salasanat eivät täsmää", "error")
         return redirect("/luo-tili/")
+
+    if users.get_users_by_name(username):
+        flash("Käyttäjänimi on jo varattu", "error")
+        return redirect("/luo-tili/")
+
     # TODO: Redirect to the user page.
     return redirect("/")
