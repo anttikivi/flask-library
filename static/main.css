@@ -59,6 +59,10 @@ h6 {
   font-family: var(--font-serif);
 }
 
+a:visited {
+  color: currentColor;
+}
+
 input {
   outline: none;
 }
