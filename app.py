@@ -27,6 +27,15 @@ def register() -> str | Response:
         password_again = request.form["password_again"]
         form_data = {"username": username}
 
+        if not users.is_valid_username(username):
+            flash(
+                "Käyttäjätunnus saa sisältää vain kirjaimia ja numeroita sekä yhdysmerkkejä ja alaviivoja. Se ei saa sisältää ääkkösiä. Käyttäjätunnuksen enimmäispituus on 16 merkkiä",
+                "error",
+            )
+            return render_template(
+                "register.html", form_data=form_data, **context
+            )
+
         if password != password_again:
             flash("Salasanat eivät täsmää", "error")
             return render_template(
@@ -34,7 +43,7 @@ def register() -> str | Response:
             )
 
         if users.get_users_by_name(username):
-            flash("Käyttäjänimi on jo varattu", "error")
+            flash("Käyttäjätunnus on jo varattu", "error")
             return render_template(
                 "register.html", form_data=form_data, **context
             )

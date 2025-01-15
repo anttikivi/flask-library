@@ -25,13 +25,17 @@
               {{ ' class="label-error"' | safe if "käyttäjä" in errors | first | lower else "" }}
               for="username"
             >
-              <span>Käyttäjänimi</span>
+              <span>Käyttäjätunnus</span>
               <input
                 id="username"
                 name="username"
                 type="text"
                 value="{{- form_data.username if form_data and 'username' in form_data else '' -}}"
               />
+              <span class="hint"
+                >Korkeintaan 16 merkkiä, saa sisältää vain isoja ja pieniä
+                kirjaimia ilman ääkkösiä sekä viivoja ja alaviivoja</span
+              >
             </label>
           </div>
           <div>
