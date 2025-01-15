@@ -79,8 +79,10 @@ provided script.
 
     ./scripts/gen_secret_key.py
 
-> [!CAUTION] The script replaces the `.env` file. Do not run the script if you
-> want to preserve what is in the file.
+<!-- prettier-ignore -->
+> [!CAUTION]
+> The script replaces the `.env` file. Do not run the script if you want to
+> preserve what is in the file.
 
 Once again, make sure the script has sufficient permissions.
 
