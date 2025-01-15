@@ -27,6 +27,7 @@ CREATE TABLE classification (
 -- for searching.
 CREATE TABLE class_index_words (
   id INTEGER PRIMARY KEY,
-  class_id INTEGER REFERENCES classification,
-  word TEXT NOT NULL
+  class_id INTEGER NOT NULL,
+  word TEXT NOT NULL,
+  FOREIGN KEY(class_id) REFERENCES classification(id)
 );
