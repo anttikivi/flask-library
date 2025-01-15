@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     {% if is_home -%}
-    <title>{{ site.title }} - {{ site.subtitle }}</title>
+      <title>{{ site.title }} - {{ site.subtitle }}</title>
     {%- else -%}
-    <title>{{ title }} - {{ site.title }}</title>
+      <title>{%- block title %}{%- endblock %} - {{ site.title }}</title>
     {%- endif -%}
 
     <link href="/static/main.css" rel="stylesheet" />
@@ -27,12 +27,12 @@
     <header class="main-header-wrapper">
       <div class="container main-header">
         {% if is_home -%}
-        <h1>{{- site.title -}}</h1>
+          <h1>{{- site.title -}}</h1>
         {%- else -%}
-        <a class="title" href="/">{{- site.title -}}</a>
+          <a class="title" href="/">{{- site.title -}}</a>
         {%- endif -%}
         <div class="links">
-          <a href="/">Rekisteröidy</a><a href="/">Kirjaudu</a>
+          <a href="/luo-tili">Luo tili</a><a href="/">Kirjaudu</a>
         </div>
       </div>
     </header>

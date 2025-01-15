@@ -80,6 +80,21 @@ The application should now be accessible at
 
 ## Development
 
+### Design Decisions
+
+One of the noteworthy design decisions within the scope of the course that this
+app’s been written for is that even though the code is in English, as one would
+expect, the user facing interface is in Finnish. This includes the URLs that the
+user might be expected to type. For example, if you were to browse a Finnish
+website and you wanted to create a user there, it would be confusing if you
+suddenly had to type the URL for registration in English, i.e. `/register`
+instead of `/rekisteroidy` or `/luo-tili`. That’s why you’ll see a combination
+of Finnish and English routes within the app. This can also be helpful—this
+let’s you quickly distinguish between the actual pages of the app and the API
+endpoints.
+
+### Tools
+
 This project uses [Ruff](https://docs.astral.sh/ruff/) for linting and
 formatting code Python code as it is faster than many of the alternatives. You
 can install Ruff either to you local virtual environment or globally using

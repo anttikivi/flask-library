@@ -8,3 +8,8 @@ context = {"site": {"subtitle": "Kirjat purkissa", "title": "Flask-kirjasto"}}
 @app.route("/")
 def index() -> str:
     return render_template("index.html", **context, is_home=True)
+
+
+@app.route("/luo-tili/")
+def register() -> str:
+    return render_template("register.html", **context)
