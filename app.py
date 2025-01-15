@@ -1,4 +1,5 @@
 import os
+
 from flask import Flask, flash, redirect, render_template, request
 from werkzeug.wrappers import Response
 
@@ -36,6 +37,13 @@ def create_user() -> Response:
     if users.get_users_by_name(username):
         flash("Käyttäjänimi on jo varattu", "error")
         return redirect("/luo-tili/")
+
+    # Because I check the username's uniqueness above, there is no need
+    # to check for error here: if the database operation fails, it is
+    # desirable to return an internal server error as that tells me that
+    # there is really a bug in the program. I try to stay away from
+    # using excetion for flow control.
+    users.create_user(username, password)
 
     # TODO: Redirect to the user page.
     return redirect("/")
