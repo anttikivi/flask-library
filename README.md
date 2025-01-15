@@ -46,6 +46,9 @@ Install dependencies.
 
     pip install -r requirements.txt
 
+> The app depends only on Flask. If you want to, running `pip install flask`
+> should also do the job.
+
 Before starting the server, you need to initalize the database. First create the
 database tables.
 
