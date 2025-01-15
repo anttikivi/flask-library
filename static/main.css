@@ -63,6 +63,18 @@ a:visited {
   color: currentColor;
 }
 
+a:hover,
+a:focus {
+  color: var(--color-purple-700);
+}
+
+@media (prefers-color-scheme: dark) {
+  a:hover,
+  a:focus {
+    color: var(--color-purple-400);
+  }
+}
+
 input {
   outline: none;
 }
