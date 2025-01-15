@@ -1,7 +1,7 @@
 CREATE TABLE users (
   id INTEGER PRIMARY KEY,
-  username TEXT UNIQUE,
-  password_hash TEXT
+  username TEXT NOT NULL UNIQUE,
+  password_hash TEXT NOT NULL
 );
 
 -- The table classification uses nested set model for representing the tree in
@@ -15,7 +15,7 @@ CREATE TABLE users (
 --    pre-set classification.
 CREATE TABLE classification (
   id INTEGER PRIMARY KEY,
-  key TEXT UNIQUE,
+  key TEXT NOT NULL UNIQUE,
   label TEXT,
   lft INTEGER NOT NULL,
   rgt INTEGER NOT NULL
@@ -28,5 +28,5 @@ CREATE TABLE classification (
 CREATE TABLE class_index_words (
   id INTEGER PRIMARY KEY,
   class_id INTEGER REFERENCES classification,
-  word TEXT
+  word TEXT NOT NULL
 );
