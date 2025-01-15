@@ -10,7 +10,7 @@
       päässä elämäsi kirjastonhoitokokemuksesta. Kaikki kentät ovat pakollisia.
     </p>
     <div class="register-form-wrapper">
-      <form class="register-form" action="/create-user" method="POST">
+      <form class="register-form" method="POST">
         {% with errors = get_flashed_messages(category_filter=["error"]) %}
           {% if errors %}
             <h2 class="sr-only">Lomakkeessa olleet virheet</h2>
@@ -26,7 +26,12 @@
               for="username"
             >
               <span>Käyttäjänimi</span>
-              <input id="username" name="username" type="text" />
+              <input
+                id="username"
+                name="username"
+                type="text"
+                value="{{- form_data.username if form_data and 'username' in form_data else '' -}}"
+              />
             </label>
           </div>
           <div>
