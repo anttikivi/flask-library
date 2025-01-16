@@ -87,3 +87,8 @@ def login():
 
     # If the method is not "POST", it's "GET".
     return render_template("login.html", **context)
+
+
+@app.errorhandler(404)
+def handle_not_found(_: object):
+    return render_template("404.html", **context), 404
