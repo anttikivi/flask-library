@@ -12,5 +12,10 @@
         Tervetuloa käyttäjän {{ user.username }} sivulle.
       </p>
     {% endif %}
+    {% if user.username == session.username %}
+      <div class="user-nav">
+        <a href="/asetukset">Vaihda käyttäjätunnus tai salasana</a>
+      </div>
+    {% endif %}
   </div>
 {% endblock %}

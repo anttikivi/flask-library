@@ -255,6 +255,11 @@ input {
   }
 }
 
+main .title {
+  margin: 1rem auto;
+  text-align: center;
+}
+
 .page-intro {
   text-align: center;
 }
@@ -273,6 +278,10 @@ input {
 .register-form {
   display: inline-block;
   margin: 2rem auto;
+}
+
+.edit-form {
+  margin: 1rem auto;
 }
 
 .register-form > div {
@@ -337,5 +346,20 @@ input {
   .register-form button[type="submit"]:hover,
   .register-form button[type="submit"]:focus {
     color: var(--color-purple-400);
+  }
+}
+
+.user-nav {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin: 1rem auto;
+}
+
+@media (min-width: 768px) {
+  .user-nav {
+    flex-direction: row;
   }
 }

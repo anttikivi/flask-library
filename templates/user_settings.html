@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+
+{% block title %}Käyttäjän asetukset{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <h1 class="page-title">Käyttäjän asetukset</h1>
+    <h2 class="title">Vaihda käyttäjätunnus</h2>
+    <p class="page-intro">Nykyinen käyttäjätunnuksesi: {{ user.username -}}.</p>
+    <div class="register-form-wrapper">
+      <form class="register-form edit-form" method="POST">
+        {% with errors = get_flashed_messages(category_filter=["username"]) %}
+          {% if errors %}
+            <h2 class="sr-only">Lomakkeessa olleet virheet</h2>
+            <ul class="flashes">
+              {% for msg in errors %}
+                <li class="error">{{ msg }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+          <div>
+            <label
+              {{ ' class="label-error"' | safe if "käyttäjä" in errors | first | lower else "" }}
+              for="username"
+            >
+              <span>Käyttäjätunnus</span>
+              <input
+                id="username"
+                name="username"
+                type="text"
+                value="{{- form_data.username if form_data and 'username' in form_data else '' -}}"
+              />
+              <span class="hint"
+                >Korkeintaan 16 merkkiä, saa sisältää vain isoja ja pieniä
+                kirjaimia ilman ääkkösiä sekä viivoja ja alaviivoja</span
+              >
+            </label>
+          </div>
+          <div>
+            <label
+              {{ ' class="label-error"' | safe if "salasana" in errors | first | lower else "" }}
+              for="password"
+            >
+              <span>Salasana</span>
+              <input id="password" name="password" type="password" />
+            </label>
+          </div>
+          <input type="hidden" name="what" value="username" />
+          <button type="submit">Vaihda käyttäjätunnus</button>
+        {% endwith %}
+      </form>
+    </div>
+  </div>
+{% endblock %}

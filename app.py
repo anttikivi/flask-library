@@ -33,8 +33,77 @@ def user_page(username: str):
     user = users.get_users_by_name(username)
     if not user:
         abort(404)
-    # TODO: Pass the user information.
     return render_template("user.html", user=user, **context)
+
+
+@app.route("/asetukset/", methods=["GET", "POST"])
+def edit_user():
+    username: str = session["username"]
+    user = users.get_users_by_name(username)
+
+    if request.method == "POST":
+        if "what" not in request.form:
+            abort(400)
+        what = request.form["what"]
+        if what != "username" and what != "password":
+            abort(400)
+
+        if what == "username":
+            new_username = request.form["username"]
+            password = request.form["password"]
+            form_data = {"username": new_username}
+            if not users.is_valid_username(new_username):
+                flash(
+                    "Käyttäjätunnus saa sisältää vain kirjaimia ja numeroita sekä yhdysmerkkejä ja alaviivoja. Se ei saa sisältää ääkkösiä. Käyttäjätunnuksen enimmäispituus on 16 merkkiä",
+                    "username",
+                )
+                return render_template(
+                    "user_settings.html",
+                    form_data=form_data,
+                    user=user,
+                    **context,
+                )
+            check_user = users.get_users_by_name(new_username)
+            if check_user:
+                flash("Käyttäjätunnus on varattu", "username")
+                return render_template(
+                    "user_settings.html",
+                    form_data=form_data,
+                    user=user,
+                    **context,
+                )
+
+            user_id = users.check_login(username, password)
+            if not user_id:
+                flash("Väärä salasana", "username")
+                return render_template(
+                    "user_settings.html",
+                    form_data=form_data,
+                    user=user,
+                    **context,
+                )
+
+            users.change_username(user_id, new_username)
+            new_user = users.get_users_by_name(new_username)
+
+            if new_user is None:
+                abort(500)
+
+            if user_id:
+                session["user_id"] = new_user.id
+                session["username"] = new_user.username
+                session["csrf_token"] = secrets.token_hex(16)
+                return render_template(
+                    "user_settings.html", user=new_user, **context
+                )
+
+    if "username" not in session:
+        abort(401)
+    if not user:
+        # The session has a username so we can expect to find the user
+        # in the database.
+        abort(500)
+    return render_template("user_settings.html", user=user, **context)
 
 
 @app.route("/luo-tili/", methods=["GET", "POST"])
