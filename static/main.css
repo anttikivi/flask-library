@@ -226,12 +226,12 @@ input {
   }
 }
 
-.register-intro {
+.page-intro {
   text-align: center;
 }
 
 @media (min-width: 768px) {
-  .register-intro {
+  .page-intro {
     font-size: 1.2rem;
     line-height: 1.5;
   }
