@@ -11,7 +11,7 @@
       <form class="register-form edit-form" method="POST">
         {% with errors = get_flashed_messages(category_filter=["username"]) %}
           {% if errors %}
-            <h2 class="sr-only">Lomakkeessa olleet virheet</h2>
+            <h3 class="sr-only">Lomakkeessa olleet virheet</h3>
             <ul class="flashes">
               {% for msg in errors %}
                 <li class="error">{{ msg }}</li>
@@ -39,14 +39,63 @@
           <div>
             <label
               {{ ' class="label-error"' | safe if "salasana" in errors | first | lower else "" }}
-              for="password"
+              for="username_password"
             >
               <span>Salasana</span>
-              <input id="password" name="password" type="password" />
+              <input id="username_password" name="password" type="password" />
             </label>
           </div>
           <input type="hidden" name="what" value="username" />
           <button type="submit">Vaihda käyttäjätunnus</button>
+        {% endwith %}
+      </form>
+    </div>
+
+    <h2 class="title">Vaihda salasana</h2>
+    <div class="register-form-wrapper">
+      <form class="register-form edit-form" method="POST">
+        {% with errors = get_flashed_messages(category_filter=["password"]) %}
+          {% if errors %}
+            <h3 class="sr-only">Lomakkeessa olleet virheet</h3>
+            <ul class="flashes">
+              {% for msg in errors %}
+                <li class="error">{{ msg }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+          <div>
+            <label
+              {{ ' class="label-error"' | safe if "väärä salasana" in errors | first | lower else "" }}
+              for="old_password"
+            >
+              <span>Vanha salasana</span>
+              <input id="old_password" name="old_password" type="password" />
+            </label>
+          </div>
+          <div>
+            <label
+              {{ ' class="label-error"' | safe if "salasanat" in errors | first | lower else "" }}
+              for="new_password"
+            >
+              <span>Uusi salasana</span>
+              <input id="new_password" name="new_password" type="password" />
+            </label>
+          </div>
+          <div>
+            <label
+              {{ ' class="label-error"' | safe if "salasanat" in errors | first | lower else "" }}
+              for="new_password_again"
+            >
+              <span>Uusi salasana uudelleen</span>
+              <input
+                id="new_password_again"
+                name="new_password_again"
+                type="password"
+              />
+            </label>
+          </div>
+          <input type="hidden" name="what" value="password" />
+          <button type="submit">Vaihda salasana</button>
         {% endwith %}
       </form>
     </div>

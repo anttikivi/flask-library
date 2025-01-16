@@ -39,7 +39,14 @@ def user_page(username: str):
 @app.route("/asetukset/", methods=["GET", "POST"])
 def edit_user():
     username: str = session["username"]
+    if "username" not in session:
+        abort(401)
+
     user = users.get_users_by_name(username)
+    if not user:
+        # The session has a username so we can expect to find the user
+        # in the database.
+        abort(500)
 
     if request.method == "POST":
         if "what" not in request.form:
@@ -97,12 +104,39 @@ def edit_user():
                     "user_settings.html", user=new_user, **context
                 )
 
-    if "username" not in session:
-        abort(401)
-    if not user:
-        # The session has a username so we can expect to find the user
-        # in the database.
-        abort(500)
+        if what == "password":
+            old_password = request.form["old_password"]
+            new_password = request.form["new_password"]
+            new_password_again = request.form["new_password_again"]
+            if new_password != new_password_again:
+                flash("Salasanat eivät täsmää", "password")
+                return render_template(
+                    "user_settings.html", user=user, **context
+                )
+
+            user_id = users.check_login(username, old_password)
+            if not user_id:
+                flash("Väärä salasana", "password")
+                return render_template(
+                    "user_settings.html", user=user, **context
+                )
+
+            users.change_password(user_id, new_password)
+
+            # These checks might not really be necessary, but it's fast
+            # enough and I think it's reasonable to also reset the CSRF token.
+            new_user = users.get_users_by_name(username)
+            if new_user is None:
+                abort(500)
+
+            if user_id:
+                session["user_id"] = new_user.id
+                session["username"] = new_user.username
+                session["csrf_token"] = secrets.token_hex(16)
+                return render_template(
+                    "user_settings.html", user=new_user, **context
+                )
+
     return render_template("user_settings.html", user=user, **context)
 
 

@@ -256,8 +256,12 @@ input {
 }
 
 main .title {
-  margin: 1rem auto;
+  margin: 3rem auto 1rem;
   text-align: center;
+}
+
+main .title:first-of-type {
+  margin: 1rem auto;
 }
 
 .page-intro {

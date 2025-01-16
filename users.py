@@ -35,6 +35,12 @@ def change_username(user_id: int, new_username: str):
     db.execute(sql, [new_username, user_id])
 
 
+def change_password(user_id: int, new_password: str):
+    password_hash = generate_password_hash(new_password)
+    sql = "UPDATE users SET password_hash = ? WHERE id = ?"
+    db.execute(sql, [password_hash, user_id])
+
+
 def check_login(username: str, password: str) -> int | None:
     sql = "SELECT id, password_hash FROM users WHERE username = ?"
     result = db.query(sql, [username])
