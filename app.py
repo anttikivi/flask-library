@@ -1,7 +1,15 @@
 import os
 import secrets
 
-from flask import Flask, flash, redirect, render_template, request, session
+from flask import (
+    Flask,
+    abort,
+    flash,
+    redirect,
+    render_template,
+    request,
+    session,
+)
 from werkzeug.wrappers import Response
 
 import env
@@ -56,10 +64,18 @@ def register() -> str | Response:
         # stay away from using excetion for flow control.
         users.create_user(username, password)
 
-        # TODO: Log in the user.
+        # Log in the user.
+        user_id = users.check_login(username, password)
+        if user_id:
+            session["user_id"] = user_id
+            session["username"] = username
+            session["csrf_token"] = secrets.token_hex(16)
 
-        # TODO: Redirect to the user page.
-        return redirect("/")
+            # TODO: Redirect to the user page.
+            return redirect("/")
+
+        # If we cannot log in the user we just created, something is wrong.
+        abort(500)
 
     # If the method is not "POST", I can assume it's "GET" (might also
     # be "HEAD" or "OPTIONS", but Flask takes care of those for us).
