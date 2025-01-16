@@ -5,6 +5,12 @@
 {% block content %}
   <div class="container">
     <h1 class="page-title">Käyttäjä: {{ user.username -}}</h1>
-    <p class="page-intro">Tervetuloa, {{ user.username }}.</p>
+    {% if user.username == session.username %}
+      <p class="page-intro">Tervetuloa, {{ user.username }}.</p>
+    {% else %}
+      <p class="page-intro">
+        Tervetuloa käyttäjän {{ user.username }} sivulle.
+      </p>
+    {% endif %}
   </div>
 {% endblock %}
