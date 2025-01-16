@@ -191,12 +191,12 @@ input {
   text-decoration: none;
 }
 
-.main-header a.title {
+.main-header a {
   color: var(--color-gray-900);
 }
 
 @media (prefers-color-scheme: dark) {
-  .main-header a.title {
+  .main-header a {
     color: var(--color-gray-100);
   }
 }
@@ -204,6 +204,18 @@ input {
 .main-header a.title:hover,
 .main-header a.title:focus {
   text-decoration: underline;
+}
+
+.main-header a:hover,
+.main-header a:focus {
+  color: var(--color-purple-700);
+}
+
+@media (prefers-color-scheme: dark) {
+  .main-header a:hover,
+  .main-header a:focus {
+    color: var(--color-purple-400);
+  }
 }
 
 .main-header .links {
