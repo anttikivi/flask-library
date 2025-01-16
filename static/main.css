@@ -233,6 +233,7 @@ input {
 @media (min-width: 768px) {
   .register-intro {
     font-size: 1.2rem;
+    line-height: 1.5;
   }
 }
 
