@@ -15,7 +15,7 @@ As of right now, here is the list of the planned features. As the development
 progresses, I’ll mark the checkboxes as the features in question get
 implemented.
 
-- [ ] The user can create an account and log in.
+- [x] The user can create an account and log in.
 - [ ] Only some information of the user libraries are shown without logging. As
       the app stores information on personal belongings, it is sensible to
       authenticate those who can browse the information in the database.
