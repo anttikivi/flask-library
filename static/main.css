@@ -220,9 +220,18 @@ input {
 
 .main-header .links {
   display: flex;
-  justify-content: flex-end;
-  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
   gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .main-header .links {
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+  }
 }
 
 .page-title {
