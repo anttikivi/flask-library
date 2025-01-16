@@ -8,8 +8,17 @@ from flask import g
 def get_connection() -> sqlite3.Connection:
     con = sqlite3.connect("database.db")
     _ = con.execute("PRAGMA foreign_keys = ON")
-    con.row_factory = sqlite3.Row
+    # Old factory: con.row_factory = sqlite3.Row
+    con.row_factory = dict_factory
     return con
+
+
+def dict_factory(
+    cursor: sqlite3.Cursor,
+    row: tuple[Any, ...],  # pyright: ignore[reportExplicitAny]
+) -> dict[str, Any]:  # pyright: ignore[reportExplicitAny]
+    fields = [column[0] for column in cursor.description]
+    return {key: value for key, value in zip(fields, row)}  # pyright: ignore[reportAny]
 
 
 def execute(sql: str, params: Sequence[Any] | None = None) -> None:  # pyright: ignore[reportExplicitAny]
