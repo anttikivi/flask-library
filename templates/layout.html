@@ -32,7 +32,12 @@
           <a class="title" href="/">{{- site.title -}}</a>
         {%- endif -%}
         <div class="links">
-          <a href="/kirjaudu">Kirjaudu</a>
+          {% if session.user_id %}
+            <a href="/kayttaja/{{- session.username -}}">Käyttäjäsivu</a>
+            <a href="/logout">Kirjaudu ulos</a>
+          {% else %}
+            <a href="/kirjaudu">Kirjaudu</a>
+          {% endif %}
         </div>
       </div>
     </header>

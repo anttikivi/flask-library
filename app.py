@@ -89,6 +89,14 @@ def login():
     return render_template("login.html", **context)
 
 
+@app.route("/logout/", methods=["GET"])
+def logout() -> Response:
+    if "user_id" in session:
+        del session["user_id"]
+        del session["username"]
+    return redirect("/")
+
+
 @app.errorhandler(404)
 def handle_not_found(_: object):
     return render_template("404.html", **context), 404
