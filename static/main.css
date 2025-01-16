@@ -179,15 +179,24 @@ input {
 
 .main-header {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  justify-content: flex-start;
   align-items: center;
+  row-gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .main-header {
+    flex-direction: row;
+    justify-content: space-between;
+  }
 }
 
 .main-header h1,
 .main-header a.title {
   font-weight: bold;
   font-family: var(--font-serif);
-  font-size: 1.5rem;
+  font-size: 2rem;
   text-decoration: none;
 }
 
@@ -222,7 +231,7 @@ input {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: flex-end;
+  align-items: center;
   gap: 1rem;
 }
 
@@ -230,7 +239,6 @@ input {
   .main-header .links {
     flex-direction: row;
     justify-content: flex-end;
-    align-items: center;
   }
 }
 
