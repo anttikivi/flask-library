@@ -1,13 +1,27 @@
+from dataclasses import dataclass
 from typing import cast
 from werkzeug.security import check_password_hash, generate_password_hash
 
 import db
 
 
+@dataclass
+class User:
+    id: int
+    username: str
+
+
 def get_users_by_name(username: str):
     sql = "SELECT id, username FROM users WHERE username = ?"
     result = db.query(sql, [username])
-    return result[0] if result else None
+    return (
+        User(
+            id=cast(int, result[0]["id"]),
+            username=cast(str, result[0]["username"]),
+        )
+        if result
+        else None
+    )
 
 
 def create_user(username: str, password: str):

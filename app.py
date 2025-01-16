@@ -28,6 +28,15 @@ def index() -> str:
     return render_template("index.html", **context, is_home=True)
 
 
+@app.route("/kayttaja/<string:username>", methods=["GET"])
+def user_page(username: str):
+    user = users.get_users_by_name(username)
+    if not user:
+        abort(404)
+    # TODO: Pass the user information.
+    return render_template("user.html", user=user, **context)
+
+
 @app.route("/luo-tili/", methods=["GET", "POST"])
 def register() -> str | Response:
     if request.method == "POST":

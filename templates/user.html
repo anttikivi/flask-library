@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+
+{% block title %}Käyttäjä {{ user.username }}{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <h1 class="page-title">Käyttäjä: {{ user.username -}}</h1>
+    <p class="page-intro">Tervetuloa, {{ user.username }}.</p>
+  </div>
+{% endblock %}
