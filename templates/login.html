@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+
+{% block title %}Kirjaudu{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <h1 class="page-title">Kirjaudu sisään</h1>
+    <p class="register-intro">
+      Tervetuloa Flask-kirjastoon. Jos sinulla ei ole vielä käyttäjää, voit
+      luoda sen
+      <a href="/luo-tili">tästä</a>.
+    </p>
+    <div class="register-form-wrapper">
+      <form class="register-form" method="POST">
+        {% with errors = get_flashed_messages(category_filter=["error"]) %}
+          {% if errors %}
+            <h2 class="sr-only">Virhe</h2>
+            <ul class="flashes">
+              {% for msg in errors %}
+                <li class="error">{{ msg }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+          <div>
+            <label for="username">
+              <span>Käyttäjätunnus</span>
+              <input
+                id="username"
+                name="username"
+                type="text"
+                value="{{- form_data.username if form_data and 'username' in form_data else '' -}}"
+              />
+            </label>
+          </div>
+          <div>
+            <label for="password">
+              <span>Salasana</span>
+              <input id="password" name="password" type="password" />
+            </label>
+          </div>
+          <button type="submit">Kirjaudu sisään</button>
+        {% endwith %}
+      </form>
+    </div>
+  </div>
+{% endblock %}

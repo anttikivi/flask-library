@@ -61,3 +61,8 @@ def register() -> str | Response:
     # If the method is not "POST", I can assume it's "GET" (might also
     # be "HEAD" or "OPTIONS", but Flask takes care of those for us).
     return render_template("register.html", **context)
+
+
+@app.route("/kirjaudu/", methods=["GET"])
+def login():
+    return render_template("login.html", **context)
