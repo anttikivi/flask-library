@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+
+{% block title %}Käyttäjää ei tunnistettu{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <h1 class="page-title">401: Ei valtuuksia</h1>
+    <p class="page-intro">
+      Sinua ei tunnistettu, joten sinulla ei ole pääsyä tälle sivulle. Sinun
+      tulee ensin <a href="/kirjaudu">kirjautua sisälle palveluun</a>.
+    </p>
+  </div>
+{% endblock %}
