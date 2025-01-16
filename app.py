@@ -92,3 +92,8 @@ def login():
 @app.errorhandler(404)
 def handle_not_found(_: object):
     return render_template("404.html", **context), 404
+
+
+@app.errorhandler(500)
+def handle_internal_server_error(_: object):
+    return render_template("500.html", **context), 500

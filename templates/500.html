@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+
+{% block title %}Palvelimen virhe{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <h1 class="page-title">500: Internal Server Error</h1>
+    <p class="register-intro">
+      Hups! Pyyntöäsi ei voitu suorittaa palvelimen virheen vuoksi. Tämä johtuu
+      todennäköisesti ohjelmointivirheestä. Kannattaa raportoida tästä ohjelman
+      kehittäjille esimerkiksi
+      <a
+        href="https://github.com/anttikivi/flask-library/issues"
+        rel="noopener noreferrer"
+        target="_blank"
+        >GitHubissa</a
+      >.
+    </p>
+  </div>
+{% endblock %}
