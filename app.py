@@ -13,6 +13,7 @@ from flask import (
 from werkzeug.wrappers import Response
 
 import env
+import library
 import users
 
 env.read_env_file()
@@ -179,6 +180,10 @@ def register() -> str | Response:
         # Log in the user.
         user_id = users.check_login(username, password)
         if user_id:
+            # Each user has exactly one library, and it is created
+            # during the registration.
+            library.create_library(user_id)
+
             session["user_id"] = user_id
             session["username"] = username
             session["csrf_token"] = secrets.token_hex(16)
