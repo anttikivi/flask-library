@@ -31,3 +31,33 @@ CREATE TABLE class_index_words (
   word TEXT NOT NULL,
   FOREIGN KEY(class_id) REFERENCES classification(id)
 );
+
+CREATE TABLE authors (
+  id INTEGER PRIMARY KEY,
+  first_name TEXT,
+  surname TEXT NOT NULL -- Authors are sorted, as names usually, by surname. This also works as a pen name if an author only has a one-part name.
+);
+
+CREATE TABLE books (
+  id INTEGER PRIMARY KEY,
+  isbn TEXT,
+  name TEXT,
+  author_id INTEGER NOT NULL,
+  class_id INTEGER NOT NULL,
+  FOREIGN KEY(author_id) REFERENCES authors(id),
+  FOREIGN KEY(class_id) REFERENCES classification(id)
+);
+
+CREATE TABLE libraries (
+  id INTEGER PRIMARY KEY,
+  user_id INTEGER NOT NULL,
+  FOREIGN KEY(user_id) REFERENCES users(id)
+);
+
+CREATE TABLE book_ownerships (
+  id INTEGER PRIMARY KEY,
+  book_id INTEGER NOT NULL,
+  library_id INTEGER NOT NULL,
+  FOREIGN KEY(book_id) REFERENCES books(id),
+  FOREIGN KEY(library_id) REFERENCES libraries(id)
+);
