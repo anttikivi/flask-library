@@ -7,9 +7,7 @@ database.
 
 While this project uses English for development, the user-facing web application
 will be implemented in Finnish and using the
-[Finnish Public Libraries Classification System](https://finto.fi/ykl/fi/) if
-possible during the course. The system is available in XML, but parsing it into
-the application might not be worth it within the scope of this application.
+[Finnish Public Libraries Classification System](https://finto.fi/ykl/fi/).
 
 As of right now, here is the list of the planned features. As the development
 progresses, I’ll mark the checkboxes as the features in question get
