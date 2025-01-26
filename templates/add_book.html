@@ -39,7 +39,7 @@
         </p>
         <p>
           <span class="inline-author-name">Kirjoittaja</span>:
-          {% if author.first_name -%}{{ author.first_name }}{{ ' ' }}{% endif %}{{ author.surname }}
+          {% if author.first_name -%}{{ author.first_name }}{{ " " }}{% endif %}{{ author.surname }}
         </p>
       </div>
     {% endif %}
@@ -88,8 +88,8 @@
                   <div class="label-wrapper">
                     <label for="author-{{- author.id -}}"
                       ><span class="surname">{{- author.surname -}}</span
-                      >{% if author.first_name %}
-                        , <span>{{- author.first_name -}}</span>
+                      >{% if author.first_name -%}
+                        {{ ", " }}<span>{{- author.first_name -}}</span>
                       {% endif %}</label
                     >
                   </div>
