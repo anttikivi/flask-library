@@ -624,6 +624,14 @@ def add_book() -> str | Response:
     return render_template("add_book.html", form_data=form_data, **context)
 
 
+@app.route("/kirja/<int:book_id>", methods=["GET"])
+def book_page(book_id: int):
+    book = library.get_book_by_id(book_id)
+    if not book:
+        abort(404)
+    return render_template("book.html", book=book, **context)
+
+
 @app.errorhandler(401)
 def handle_unauthorized(_: object):
     return render_template("401.html", **context), 401
