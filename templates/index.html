@@ -13,8 +13,12 @@
       {% if session.user_id %}
         {# TODO: Show useful info here. #}
         <p>Olet kirjautunut sisään.</p>
+        {% include "library_status_widget.html" %}
       {% else %}
-        <p>Aloita <a href="/luo-tili">luomalla tili</a>.</p>
+        <p>
+          Aloita <a href="/kirjaudu">kirjautumalla sisään</a> tai
+          <a href="/luo-tili">luomalla tili</a>.
+        </p>
       {% endif %}
     </div>
   </div>

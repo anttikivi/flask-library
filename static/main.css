@@ -172,6 +172,29 @@ input {
   }
 }
 
+a.button {
+  padding: 0.5rem;
+  border-radius: 0.2rem;
+  border: 2px solid currentColor;
+  background: none;
+  font-size: 1rem;
+  font-family: var(--font-sans);
+  color: currentColor;
+  text-decoration: none;
+}
+
+a.button:hover,
+a.button:focus {
+  color: var(--color-purple-700);
+}
+
+@media (prefers-color-scheme: dark) {
+  a.button:hover,
+  a.button:focus {
+    color: var(--color-purple-400);
+  }
+}
+
 .main-header-wrapper {
   padding-top: 2rem;
   padding-bottom: 2rem;
