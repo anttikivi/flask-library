@@ -1,6 +1,6 @@
 import sqlite3
 from collections.abc import Sequence
-from typing import Any
+from typing import Any, cast
 
 from flask import g
 
@@ -31,8 +31,8 @@ def execute(sql: str, params: Sequence[Any] | None = None) -> None:  # pyright: 
     con.close()
 
 
-def last_insert_id() -> Any:  # pyright: ignore[reportAny,reportExplicitAny]
-    return g.last_insert_id  # pyright: ignore[reportAny]
+def last_insert_id() -> int:
+    return cast(int, g.last_insert_id)
 
 
 def query(sql: str, params: Sequence[Any] | None = None) -> Sequence[Any]:  # pyright: ignore[reportExplicitAny]

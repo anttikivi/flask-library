@@ -278,6 +278,19 @@ a.button:focus {
   }
 }
 
+.subtitle {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 2rem auto;
+}
+
+@media (min-width: 768px) {
+  .subtitle {
+    font-size: 2.5rem;
+  }
+}
+
 main .title {
   margin: 3rem auto 1rem;
   text-align: center;
@@ -310,8 +323,19 @@ main .title:first-of-type {
   text-align: center;
 }
 
+.register-form-wrapper h3 {
+  font-size: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .register-form-wrapper h3 {
+    font-size: 2rem;
+  }
+}
+
 .register-form {
   display: inline-block;
+  width: 100%;
   margin: 2rem auto;
 }
 
@@ -382,6 +406,88 @@ main .title:first-of-type {
   .register-form button[type="submit"]:focus {
     color: var(--color-purple-400);
   }
+}
+
+.author-select > div {
+  margin: 1rem auto;
+}
+
+.author-select .author-wrapper {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  padding: 1rem 0;
+  text-align: left;
+}
+
+.author-select .author-wrapper:not(:last-child) {
+  border-top-width: 0px;
+  border-bottom-width: 1px;
+  border-color: var(--color-gray-600);
+}
+
+@media (prefers-color-scheme: dark) {
+  .author-select .author-wrapper:not(:last-child) {
+    border-color: var(--color-gray-400);
+  }
+}
+
+.author-select .author-wrapper .label-wrapper {
+  min-width: 0;
+  flex: 1;
+}
+
+.author-select .author-wrapper .label-wrapper label {
+  user-select: none;
+}
+
+.author-select .author-wrapper .label-wrapper label .surname {
+  font-weight: bold;
+}
+
+.author-select .author-wrapper .input-wrapper {
+  display: flex;
+  align-items: center;
+  margin: 0 0 0 0.75rem;
+}
+
+.author-select .author-wrapper .input-wrapper input {
+  position: relative;
+  width: 1rem;
+  height: 1rem;
+  appearance: none;
+  border-radius: calc(infinity * 1px);
+  border-width: 1px;
+  border-color: currentColor;
+}
+
+.author-select .author-wrapper .input-wrapper input::before {
+  content: "";
+  position: absolute;
+  inset: 0.25rem;
+  border-radius: calc(infinity * 1px);
+  background: var(--color-gray-100);
+}
+
+.author-select .author-wrapper .input-wrapper input:checked {
+  background: var(--color-purple-700);
+  border-color: var(--color-purple-700);
+}
+
+@media (prefers-color-scheme: dark) {
+  .author-select .author-wrapper .input-wrapper input::before {
+    background: var(--color-gray-900);
+  }
+
+  .author-select .author-wrapper .input-wrapper input:checked {
+    background: var(--color-purple-400);
+    border-color: var(--color-purple-400);
+  }
+}
+
+.inline-author-name {
+  display: inline;
+  font-weight: bold;
 }
 
 .user-nav {

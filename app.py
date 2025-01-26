@@ -12,6 +12,8 @@ from flask import (
 )
 from werkzeug.wrappers import Response
 
+import author
+import db
 import env
 import library
 import users
@@ -27,6 +29,11 @@ context = {"site": {"subtitle": "Kirjat purkissa", "title": "Flask-kirjasto"}}
 @app.route("/", methods=["GET"])
 def index() -> str:
     return render_template("index.html", **context, is_home=True)
+
+
+########################################################################
+# USER MANAGEMENT
+########################################################################
 
 
 @app.route("/kayttaja/<string:username>", methods=["GET"])
@@ -228,6 +235,86 @@ def logout() -> Response:
         del session["user_id"]
         del session["username"]
     return redirect("/")
+
+
+########################################################################
+# BOOK MANAGEMENT
+########################################################################
+
+
+@app.route("/lisaa-kirja/", methods=["GET", "POST"])
+def add_book() -> str | Response:
+    # Regardless of method, unauthenticated users cannot access this
+    # page.
+    if "user_id" not in session:
+        abort(401)
+
+    if request.method == "POST":
+        if not request.form or "from-page" not in request.form:
+            abort(400)
+        from_page = int(request.form["from-page"])
+
+        # Handling the route is done as per the form page we are coming
+        # from.
+        if from_page == 0:
+            first_name = request.form["first-name-search"]
+            surname = request.form["surname-search"]
+            authors = author.seach_author(
+                request.form["first-name-search"],
+                request.form["surname-search"],
+            )
+            form_data = {
+                "page": from_page + 1,
+                "first_name": first_name,
+                "surname": surname,
+            }
+            return render_template(
+                "add_book.html",
+                authors=authors,
+                form_data=form_data,
+                **context,
+            )
+
+        if from_page == 1:
+            if "selected-form" not in request.form:
+                abort(400)
+
+            selected_form = request.form["selected-form"]
+            if selected_form == "select-author":
+                author_id = int(request.form["author"])
+                selected = author.get_author_by_id(author_id)
+                form_data = {"page": from_page + 1}
+                return render_template(
+                    "add_book.html",
+                    author=selected,
+                    form_data=form_data,
+                    **context,
+                )
+            elif selected_form == "new-author":
+                first_name = request.form["first-name"]
+                surname = request.form["surname"]
+                author.create_author(first_name, surname)
+                created = author.get_author_by_id(db.last_insert_id())
+                form_data = {"page": from_page + 1}
+                return render_template(
+                    "add_book.html",
+                    author=created,
+                    form_data=form_data,
+                    **context,
+                )
+            else:
+                abort(400)
+
+    # Manually init the form data for the initial GET. The rest of the
+    # requests during the book adding process are done through POSTs, so
+    # doing a GET resets the form (as it should). If the form data were
+    # not cleared when loading the page with GET again, the form might
+    # become quite broken.
+    form_data = {"page": 0}
+
+    # If the method is not "POST", I can assume it's "GET" (might also
+    # be "HEAD" or "OPTIONS", but Flask takes care of those for us).
+    return render_template("add_book.html", form_data=form_data, **context)
 
 
 @app.errorhandler(401)

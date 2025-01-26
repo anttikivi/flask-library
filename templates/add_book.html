@@ -1,0 +1,157 @@
+{% extends "layout.html" %}
+
+{% block title %}Lisää kirja{% endblock %}
+
+{% block content %}
+  <div class="container">
+    {# The instructions are changed according to the page we're on. #}
+    <h1 class="page-title">Lisää kirja</h1>
+    {% if form_data.page == 0 %}
+      <h2 class="subtitle">Hae kirjoittajaa</h2>
+      <div class="page-intro">
+        <p>
+          Aloita hakemalla kirjailijaa. Jos sama kirjailija on jo tietokannassa,
+          käytä olemassa olevaa. Pidetään kirjastot yhdessä siistinä!
+        </p>
+        <p>
+          Jos kirjailija käyttää yksiosaista nimimerkkiä, se syötetään samaan
+          kenttään kuin sukunimi.
+        </p>
+      </div>
+    {% elif form_data.page == 1 %}
+      <h2 class="subtitle">Valitse kirjoittaja</h2>
+      <div class="page-intro">
+        {% if authors %}
+          <p>
+            Haulla löytyi seuraavat tulokset. Valitse niistä sopiva kirjoittaja
+            tai luo uusi.
+          </p>
+        {% else %}
+          <p>Haulla ei löytynyt tuloksia. Lisää uusi kirjailija.</p>
+        {% endif %}
+      </div>
+    {% elif form_data.page == 2 %}
+      <h2 class="subtitle">Hae kirjaa</h2>
+      <div class="page-intro">
+        <p>
+          Hae seuraavaksi kirjan nimellä. Voit käyttää olemassa olevia tietoja,
+          jos sama kirja on jo lisätty tietokantaan.
+        </p>
+        <p>
+          <span class="inline-author-name">Kirjoittaja</span>:
+          {% if author.first_name -%}{{ author.first_name }}{{ ' ' }}{% endif %}{{ author.surname }}
+        </p>
+      </div>
+    {% endif %}
+    {% if form_data.page == 0 %}
+      <div class="register-form-wrapper">
+        <form class="register-form" method="POST">
+          <p>Tähdellä (*) merkityt kentät ovat pakollisia.</p>
+          <div>
+            <label for="first-name-search">
+              <span>Etunimi</span>
+              <input
+                id="first-name-search"
+                name="first-name-search"
+                type="text"
+              />
+            </label>
+          </div>
+          <div>
+            <label for="surname-search">
+              <span>Sukunimi tai nimimerkki *</span>
+              <input
+                id="surname-search"
+                name="surname-search"
+                type="text"
+                required
+              />
+            </label>
+          </div>
+          <input
+            id="from-page"
+            name="from-page"
+            value="{{- form_data.page -}}"
+            type="hidden"
+          />
+          <button type="submit">Hae</button>
+        </form>
+      </div>
+    {% elif form_data.page == 1 %}
+      <div class="register-form-wrapper">
+        <form class="register-form" method="POST">
+          <fieldset class="author-select">
+            <legend>Valitse kirjoittaja</legend>
+            <div>
+              {% for author in authors %}
+                <div class="author-wrapper">
+                  <div class="label-wrapper">
+                    <label for="author-{{- author.id -}}"
+                      ><span class="surname">{{- author.surname -}}</span
+                      >{% if author.first_name %}
+                        , <span>{{- author.first_name -}}</span>
+                      {% endif %}</label
+                    >
+                  </div>
+                  <div class="input-wrapper">
+                    <input
+                      id="author-{{- author.id -}}"
+                      name="author"
+                      type="radio"
+                      value="{{- author.id -}}"
+                    />
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          </fieldset>
+          <input
+            id="from-page"
+            name="from-page"
+            value="{{- form_data.page -}}"
+            type="hidden"
+          />
+          <input
+            id="selected-form"
+            name="selected-form"
+            value="select-author"
+            type="hidden"
+          />
+          <button type="submit">Valitse kirjoittaja</button>
+        </form>
+      </div>
+
+      <div class="register-form-wrapper">
+        <h3>Luo uusi kirjoittaja</h3>
+        <form class="register-form" method="POST">
+          <p>Tähdellä (*) merkityt kentät ovat pakollisia.</p>
+          <div>
+            <label for="first-name">
+              <span>Etunimi</span>
+              <input id="first-name" name="first-name" type="text" />
+            </label>
+          </div>
+          <div>
+            <label for="surname">
+              <span>Sukunimi tai nimimerkki *</span>
+              <input id="surname" name="surname" type="text" required />
+            </label>
+          </div>
+          <input
+            id="from-page"
+            name="from-page"
+            value="{{- form_data.page -}}"
+            type="hidden"
+          />
+          <input
+            id="selected-form"
+            name="selected-form"
+            value="new-author"
+            type="hidden"
+          />
+          <button type="submit">Luo kirjoittaja</button>
+        </form>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}
