@@ -412,6 +412,15 @@ main .title:first-of-type {
   margin: 1rem auto;
 }
 
+.author-select > legend {
+  margin: 1rem auto;
+}
+
+.class-select-scroll {
+  overflow-y: scroll;
+  max-height: 20rem;
+}
+
 .author-select .author-wrapper {
   position: relative;
   display: flex;

@@ -1,6 +1,8 @@
 from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import TypedDict, cast
+
+from flask import request
 import db
 
 
@@ -14,6 +16,20 @@ class Author:
 AuthorResult = TypedDict(
     "AuthorResult", {"id": int, "first_name": str | None, "surname": str}
 )
+
+
+def get_author_from_form():
+    author_id = int(request.form["author-id"])
+    author_first_name = (
+        request.form["author-first-name"]
+        if "author-first-name" in request.form
+        else None
+    )
+    author_surname = request.form["author-surname"]
+    form_author = Author(
+        id=author_id, first_name=author_first_name, surname=author_surname
+    )
+    return form_author
 
 
 def create_author(first_name: str | None, surname: str):

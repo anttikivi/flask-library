@@ -1,0 +1,20 @@
+<input
+  id="author-id"
+  name="author-id"
+  value="{{- author.id -}}"
+  type="hidden"
+/>
+{% if author.first_name %}
+  <input
+    id="author-first-name"
+    name="author-first-name"
+    value="{{- author.first_name -}}"
+    type="hidden"
+  />
+{% endif %}
+<input
+  id="author-surname"
+  name="author-surname"
+  value="{{- author.surname -}}"
+  type="hidden"
+/>

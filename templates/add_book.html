@@ -19,7 +19,7 @@
         </p>
       </div>
     {% elif form_data.page == 1 %}
-      <h2 class="subtitle">Valitse kirjoittaja</h2>
+      <h2 class="subtitle">Valitse kirjoittaja tai luo uusi</h2>
       <div class="page-intro">
         {% if authors %}
           <p>
@@ -42,127 +42,456 @@
           {% if author.first_name -%}{{ author.first_name }}{{ " " }}{% endif %}{{ author.surname }}
         </p>
       </div>
-    {% endif %}
-    {% if form_data.page == 0 %}
-      <div class="register-form-wrapper">
-        <form class="register-form" method="POST">
-          <p>Tähdellä (*) merkityt kentät ovat pakollisia.</p>
-          <div>
-            <label for="first-name-search">
-              <span>Etunimi</span>
-              <input
-                id="first-name-search"
-                name="first-name-search"
-                type="text"
-              />
-            </label>
-          </div>
-          <div>
-            <label for="surname-search">
-              <span>Sukunimi tai nimimerkki *</span>
-              <input
-                id="surname-search"
-                name="surname-search"
-                type="text"
-                required
-              />
-            </label>
-          </div>
-          <input
-            id="from-page"
-            name="from-page"
-            value="{{- form_data.page -}}"
-            type="hidden"
-          />
-          <button type="submit">Hae</button>
-        </form>
+    {% elif form_data.page == 3 %}
+      <h2 class="subtitle">Valitse kirja tai lisää uusi</h2>
+      <div class="page-intro">
+        {% if authors %}
+          <p>
+            Haulla löytyi seuraavat tulokset. Valitse niistä sopiva kirja tai
+            lisää uusi.
+          </p>
+        {% else %}
+          <p>Haulla ei löytynyt tuloksia. Lisää uusi kirja.</p>
+        {% endif %}
+        <p>
+          <span class="inline-author-name">Kirjoittaja</span>:
+          {% if author.first_name -%}{{ author.first_name }}{{ " " }}{% endif %}{{ author.surname }}
+        </p>
       </div>
-    {% elif form_data.page == 1 %}
-      <div class="register-form-wrapper">
-        <form class="register-form" method="POST">
-          <fieldset class="author-select">
-            <legend>Valitse kirjoittaja</legend>
+    {% elif form_data.page == 4 %}
+      {% if library_classes %}
+        <h2 class="subtitle">Valitse luokitus</h2>
+        <div class="page-intro">
+          <p>Haulla löytyi seuraavat tulokset. Valitse niistä sopiva.</p>
+          <p>
+            <span class="inline-author-name">Kirjoittaja</span>:
+            {% if author.first_name -%}{{ author.first_name }}{{ " " }}{% endif %}{{ author.surname }}
+          </p>
+          <p>
+            <span class="inline-author-name">Kirja</span>:{{- " " -}}
+            {{- form_data.book_name -}}
+          </p>
+        </div>
+      {% else %}
+        <h2 class="subtitle">Hae luokitusta</h2>
+        <div class="page-intro">
+          <p>Haulla ei löytynyt tuloksia. Yritä uudelleen.</p>
+          <p>
+            <span class="inline-author-name">Kirjoittaja</span>:
+            {% if author.first_name -%}{{ author.first_name }}{{ " " }}{% endif %}{{ author.surname }}
+          </p>
+          <p>
+            <span class="inline-author-name">Kirja</span>:{{- " " -}}
+            {{- form_data.book_name -}}
+          </p>
+        </div>
+      {% endif %}
+    {% endif %}
+    {% with errors = get_flashed_messages(category_filter=["error"]) %}
+      {% if errors %}
+        <h2 class="sr-only">Lomakkeessa olleet virheet</h2>
+        <ul class="flashes">
+          {% for msg in errors %}
+            <li class="error">{{ msg }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+      {% if form_data.page == 0 %}
+        <div class="register-form-wrapper">
+          <form class="register-form" method="POST">
+            <p>Tähdellä (*) merkityt kentät ovat pakollisia.</p>
             <div>
-              {% for author in authors %}
-                <div class="author-wrapper">
-                  <div class="label-wrapper">
-                    <label for="author-{{- author.id -}}"
-                      ><span class="surname">{{- author.surname -}}</span
-                      >{% if author.first_name -%}
-                        {{ ", " }}<span>{{- author.first_name -}}</span>
-                      {% endif %}</label
-                    >
-                  </div>
-                  <div class="input-wrapper">
-                    <input
-                      id="author-{{- author.id -}}"
-                      name="author"
-                      type="radio"
-                      value="{{- author.id -}}"
-                    />
-                  </div>
-                </div>
-              {% endfor %}
+              <label for="first-name-search">
+                <span>Etunimi</span>
+                <input
+                  id="first-name-search"
+                  name="first-name-search"
+                  type="text"
+                />
+              </label>
             </div>
-          </fieldset>
-          <input
-            id="from-page"
-            name="from-page"
-            value="{{- form_data.page -}}"
-            type="hidden"
-          />
-          <input
-            id="selected-form"
-            name="selected-form"
-            value="select-author"
-            type="hidden"
-          />
-          <button type="submit">Valitse kirjoittaja</button>
-        </form>
-      </div>
-
-      <div class="register-form-wrapper">
-        <h3>Luo uusi kirjoittaja</h3>
-        <form class="register-form" method="POST">
-          <p>Tähdellä (*) merkityt kentät ovat pakollisia.</p>
-          <div>
-            <label for="first-name">
-              <span>Etunimi</span>
+            <div>
+              <label
+                {{ ' class="label-error"' | safe if "sukunimi" in errors | first | lower else "" }}
+                for="surname-search"
+              >
+                <span>Sukunimi tai nimimerkki *</span>
+                <input
+                  id="surname-search"
+                  name="surname-search"
+                  type="text"
+                  required
+                />
+              </label>
+            </div>
+            <input
+              id="from-page"
+              name="from-page"
+              value="{{- form_data.page -}}"
+              type="hidden"
+            />
+            {% include "csrf_token.html" %}
+            <button type="submit">Hae</button>
+          </form>
+        </div>
+      {% elif form_data.page == 1 %}
+        {% if authors %}
+          <div class="register-form-wrapper">
+            <form class="register-form" method="POST">
+              <fieldset class="author-select">
+                <legend>Valitse kirjoittaja</legend>
+                <div>
+                  {% for author in authors %}
+                    <div class="author-wrapper">
+                      <div class="label-wrapper">
+                        <label for="author-{{- author.id -}}"
+                          ><span class="surname">{{- author.surname -}}</span
+                          >{% if author.first_name -%}
+                            {{ ", " }}<span>{{- author.first_name -}}</span>
+                          {% endif %}</label
+                        >
+                      </div>
+                      <div class="input-wrapper">
+                        <input
+                          id="author-{{- author.id -}}"
+                          name="author"
+                          type="radio"
+                          value="{{- author.id -}}"
+                        />
+                      </div>
+                    </div>
+                  {% endfor %}
+                </div>
+              </fieldset>
               <input
-                id="first-name"
-                name="first-name"
-                type="text"
+                id="from-page"
+                name="from-page"
+                value="{{- form_data.page -}}"
+                type="hidden"
+              />
+              <input
+                id="selected-form"
+                name="selected-form"
+                value="select-author"
+                type="hidden"
+              />
+              <input
+                id="last-first-name"
+                name="last-first-name"
                 value="{{- form_data.first_name -}}"
+                type="hidden"
               />
-            </label>
-          </div>
-          <div>
-            <label for="surname">
-              <span>Sukunimi tai nimimerkki *</span>
               <input
-                id="surname"
-                name="surname"
-                type="text"
+                id="last-surname"
+                name="last-surname"
                 value="{{- form_data.surname -}}"
-                required
+                type="hidden"
               />
-            </label>
+              {% include "csrf_token.html" %}
+              <button type="submit">Valitse kirjoittaja</button>
+            </form>
           </div>
-          <input
-            id="from-page"
-            name="from-page"
-            value="{{- form_data.page -}}"
-            type="hidden"
-          />
-          <input
-            id="selected-form"
-            name="selected-form"
-            value="new-author"
-            type="hidden"
-          />
-          <button type="submit">Luo kirjoittaja</button>
-        </form>
-      </div>
-    {% endif %}
+        {% endif %}
+
+        <div class="register-form-wrapper">
+          <h3>Luo uusi kirjoittaja</h3>
+          <form class="register-form" method="POST">
+            <p>Tähdellä (*) merkityt kentät ovat pakollisia.</p>
+            <div>
+              <label for="first-name">
+                <span>Etunimi</span>
+                <input
+                  id="first-name"
+                  name="first-name"
+                  type="text"
+                  value="{{- form_data.first_name -}}"
+                />
+              </label>
+            </div>
+            <div>
+              <label
+                {{ ' class="label-error"' | safe if "sukunimi" in errors | first | lower else "" }}
+                for="surname"
+              >
+                <span>Sukunimi tai nimimerkki *</span>
+                <input
+                  id="surname"
+                  name="surname"
+                  type="text"
+                  value="{{- form_data.surname -}}"
+                  required
+                />
+              </label>
+            </div>
+            <input
+              id="from-page"
+              name="from-page"
+              value="{{- form_data.page -}}"
+              type="hidden"
+            />
+            <input
+              id="selected-form"
+              name="selected-form"
+              value="new-author"
+              type="hidden"
+            />
+            {% include "csrf_token.html" %}
+            <button type="submit">Luo kirjoittaja</button>
+          </form>
+        </div>
+      {% elif form_data.page == 2 %}
+        <div class="register-form-wrapper">
+          <form class="register-form" method="POST">
+            <p>Tähdellä (*) merkityt kentät ovat pakollisia.</p>
+            <div>
+              <label
+                {{ ' class="label-error"' | safe if "kirja" in errors | first | lower else "" }}
+                for="book-name-search"
+              >
+                <span>Kirjan nimi *</span>
+                <input
+                  id="book-name-search"
+                  name="book-name-search"
+                  type="text"
+                  required
+                />
+              </label>
+            </div>
+            <input
+              id="from-page"
+              name="from-page"
+              value="{{- form_data.page -}}"
+              type="hidden"
+            />
+            {% include "form_author_fields.html" %}
+            {% include "csrf_token.html" %}
+            <button type="submit">Hae</button>
+          </form>
+        </div>
+      {% elif form_data.page == 3 %}
+        {% if books %}
+          <div class="register-form-wrapper">
+            <form class="register-form" method="POST">
+              <fieldset class="author-select">
+                <legend>Valitse kirja</legend>
+                <div>
+                  {% for book in books %}
+                    <div class="author-wrapper">
+                      <div class="label-wrapper">
+                        <label for="book-{{- book.id -}}"
+                          >{{- book.name -}}
+                        </label>
+                      </div>
+                      <div class="input-wrapper">
+                        <input
+                          id="book-{{- book.id -}}"
+                          name="book"
+                          type="radio"
+                          value="{{- book.id -}}"
+                        />
+                      </div>
+                    </div>
+                  {% endfor %}
+                </div>
+              </fieldset>
+              <input
+                id="from-page"
+                name="from-page"
+                value="{{- form_data.page -}}"
+                type="hidden"
+              />
+              <input
+                id="selected-form"
+                name="selected-form"
+                value="select-book"
+                type="hidden"
+              />
+              <input
+                id="book-name-search"
+                name="book-name-search"
+                value="{{- form_data.book_name -}}"
+                type="hidden"
+              />
+              {% include "csrf_token.html" %}
+              {% include "form_author_fields.html" %}
+              <button type="submit">Valitse kirja</button>
+            </form>
+          </div>
+        {% endif %}
+
+        <div class="register-form-wrapper">
+          <h3>Lisää uusi kirja</h3>
+          <form class="register-form" method="POST">
+            <p>Tähdellä (*) merkityt kentät ovat pakollisia.</p>
+            <div>
+              <label for="isbn">
+                <span>ISBN</span>
+                <input id="isbn" name="isbn" type="text" />
+              </label>
+            </div>
+            <div>
+              <label
+                {{ ' class="label-error"' | safe if "nimi" in errors | first | lower else "" }}
+                for="book-name"
+              >
+                <span>Nimi *</span>
+                <input
+                  id="book-name"
+                  name="book-name"
+                  type="text"
+                  value="{{- form_data.book_name -}}"
+                  required
+                />
+              </label>
+            </div>
+            <div>
+              <label
+                {{ ' class="label-error"' | safe if "luokittelu" in errors | first | lower else "" }}
+                for="class-search"
+              >
+                <span>Luokittelun haku *</span>
+                <span class="sublabel"
+                  >Kirjaston luokittelu on laaja, ja tämä ohjelma ei voi hakea
+                  tietoja reaaliajassa, koska se ei käytä JavaScriptiä. Hae siis
+                  luokitusta tässä ja valitse kirjan luokitus seuraavalla
+                  sivulla.</span
+                >
+                <input
+                  id="class-search"
+                  name="class-search"
+                  type="text"
+                  required
+                />
+              </label>
+            </div>
+            <input
+              id="from-page"
+              name="from-page"
+              value="{{- form_data.page -}}"
+              type="hidden"
+            />
+            <input
+              id="selected-form"
+              name="selected-form"
+              value="new-book"
+              type="hidden"
+            />
+            <input
+              id="book-name-search"
+              name="book-name-search"
+              value="{{- form_data.book_name -}}"
+              type="hidden"
+            />
+            {% include "csrf_token.html" %}
+            {% include "form_author_fields.html" %}
+            <button type="submit">Lisää kirja</button>
+          </form>
+        </div>
+      {% elif form_data.page == 4 %}
+        {% if library_classes %}
+          <div class="register-form-wrapper">
+            <form class="register-form" method="POST">
+              <fieldset class="author-select">
+                <legend>Valitse luokitus</legend>
+                <p>
+                  Vinkki: lista saattaa olla pitkä. Voit selata sitä
+                  vierittämällä.
+                </p>
+                <div class="class-select-scroll">
+                  {% for lib_class in library_classes %}
+                    <div class="author-wrapper">
+                      <div class="label-wrapper">
+                        <label for="class-{{- lib_class.id -}}"
+                          >{{- lib_class.key -}}{{ " " }}{{- lib_class.label -}}
+                        </label>
+                      </div>
+                      <div class="input-wrapper">
+                        <input
+                          id="class-{{- lib_class.id -}}"
+                          name="class"
+                          type="radio"
+                          value="{{- lib_class.id -}}"
+                        />
+                      </div>
+                    </div>
+                  {% endfor %}
+                </div>
+              </fieldset>
+              <input
+                id="from-page"
+                name="from-page"
+                value="{{- form_data.page -}}"
+                type="hidden"
+              />
+              <input
+                id="selected-form"
+                name="selected-form"
+                value="select"
+                type="hidden"
+              />
+              {% include "csrf_token.html" %}
+              {% include "form_author_fields.html" %}
+              {% include "form_book_fields.html" %}
+              <input
+                id="last-class-search"
+                name="last-class-search"
+                value="{{- form_data.last_class_search -}}"
+                type="hidden"
+              />
+              <button type="submit">Valitse luokitus</button>
+            </form>
+          </div>
+        {% else %}
+          <div class="register-form-wrapper">
+            <h3>Haku ei tuottanut tulosta</h3>
+            <form class="register-form" method="POST">
+              <div>
+                <label
+                  {{ ' class="label-error"' | safe if "hakusana" in errors | first | lower else "" }}
+                  for="class-search"
+                >
+                  <span>Luokittelun haku</span>
+                  <span class="sublabel"
+                    >Kirjaston luokittelu on laaja, ja tämä ohjelma ei voi hakea
+                    tietoja reaaliajassa, koska se ei käytä JavaScriptiä. Hae
+                    siis luokitusta tässä ja valitse kirjan luokitus seuraavalla
+                    sivulla.</span
+                  >
+                  <input
+                    id="class-search"
+                    name="class-search"
+                    type="text"
+                    value="{{- form_data.class_search -}}"
+                    required
+                  />
+                </label>
+              </div>
+              <input
+                id="from-page"
+                name="from-page"
+                value="{{- form_data.page -}}"
+                type="hidden"
+              />
+              <input
+                id="selected-form"
+                name="selected-form"
+                value="search"
+                type="hidden"
+              />
+              {% include "csrf_token.html" %}
+              {% include "form_author_fields.html" %}
+              {% include "form_book_fields.html" %}
+              <input
+                id="last-class-search"
+                name="last-class-search"
+                value="{{- form_data.last_class_search -}}"
+                type="hidden"
+              />
+              <button type="submit">Hae luokitusta</button>
+            </form>
+          </div>
+        {% endif %}
+      {% endif %}
+    {% endwith %}
   </div>
 {% endblock %}
