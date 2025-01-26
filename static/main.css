@@ -513,3 +513,11 @@ main .title:first-of-type {
     flex-direction: row;
   }
 }
+
+.book-title {
+  font-style: italic;
+}
+
+.book-author {
+  text-align: center;
+}

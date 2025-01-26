@@ -4,6 +4,9 @@
 
 {% block content %}
   <div class="container">
-    <h1 class="page-title">{{- book.name -}}</h1>
+    <h1 class="page-title book-title">{{- book.name -}}</h1>
+    <p class="book-author">
+      {{- author.first_name + " " if author.first_name else "" -}}{{ author.surname -}}
+    </p>
   </div>
 {% endblock %}

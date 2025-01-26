@@ -1,6 +1,6 @@
-from collections.abc import Sequence
 import os
 import secrets
+from collections.abc import Sequence
 from typing import cast
 
 from flask import (
@@ -629,7 +629,12 @@ def book_page(book_id: int):
     book = library.get_book_by_id(book_id)
     if not book:
         abort(404)
-    return render_template("book.html", book=book, **context)
+    book_author = author.get_author_by_id(book.author)
+    if not book_author:
+        abort(500)
+    return render_template(
+        "book.html", author=book_author, book=book, **context
+    )
 
 
 @app.errorhandler(401)
