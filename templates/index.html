@@ -1,1 +1,21 @@
-{% extends "layout.html" %} {% block title %}Etusivu{% endblock %}
+{% extends "layout.html" %}
+
+{% block title %}Etusivu{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <h2 class="page-title">Tervetuloa Flask-kirjastoon!</h2>
+    <div class="page-intro">
+      <p>
+        Flask-kirjastossa voit laittaa henkilökohtaisen kirjastosi järjestykseen
+        ja kurkkia muiden kirjastoihin.
+      </p>
+      {% if session.user_id %}
+        {# TODO: Show useful info here. #}
+        <p>Olet kirjautunut sisään.</p>
+      {% else %}
+        <p>Aloita <a href="/luo-tili">luomalla tili</a>.</p>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}
