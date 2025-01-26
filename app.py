@@ -66,6 +66,8 @@ def edit_user():
         abort(500)
 
     if request.method == "POST":
+        check_csrf()
+
         if "what" not in request.form:
             abort(400)
         what = request.form["what"]
