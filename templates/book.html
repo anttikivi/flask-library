@@ -3,10 +3,32 @@
 {% block title %}{{ book.name }}{% endblock %}
 
 {% block content %}
-  <div class="container">
+  <div class="container book-page">
     <h1 class="page-title book-title">{{- book.name -}}</h1>
-    <p class="book-author">
-      {{- author.first_name + " " if author.first_name else "" -}}{{ author.surname -}}
+    <p class="book-info">
+      Kirjoittaja:{{ " " }}{{- author.first_name + " " if author.first_name else "" -}}{{ author.surname -}}
     </p>
+    <p class="book-info">
+      Luokitus:{{ " " }}{{- book_class.key -}}{{ " " }}{{- book_class.label -}}
+    </p>
+    {% if session.user_id %}
+      <div class="book-edit-buttons">
+        {% if owns %}
+          <a class="button">Korjaa kirjan tietoja</a
+          ><a class="button">Korjaa kirjan luokitus</a>
+        {% else %}
+          <a
+            class="button"
+            href="/add_from_book_page?id={{- book.id -}}&token={{- session.csrf_token -}}"
+            >Lisää omaan kirjastoosi</a
+          >
+        {% endif %}
+      </div>
+    {% else %}
+      <p>
+        <a href="/kirjaudu">Kirjaudu sisälle</a> nähdäksesi kirjaan liittyvät
+        toiminnot.
+      </p>
+    {% endif %}
   </div>
 {% endblock %}

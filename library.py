@@ -54,9 +54,9 @@ def get_user_library(user_id: int) -> int | None:
     return result[0]["id"] if result else None
 
 
-def add_book_to_library(book_id: int, library_id: int):
-    sql = "INSERT INTO book_ownerships (book_id, library_id) VALUES (?, ?)"
-    db.execute(sql, [book_id, library_id])
+def add_book_to_user(book_id: int, user_id: int):
+    sql = "INSERT INTO book_ownerships (book_id, library_id) VALUES (?, (SELECT id FROM libraries WHERE user_id = ?))"
+    db.execute(sql, [book_id, user_id])
 
 
 def get_book_by_id(id: int) -> Book | None:
@@ -74,6 +74,16 @@ def get_book_by_id(id: int) -> Book | None:
         if result
         else None
     )
+
+
+def is_owner(user_id: int, book_id: int) -> bool:
+    """
+    Checks whether the given user owns a copy of the given book.
+    """
+    sql = "SELECT COUNT(o.id) AS count FROM book_ownerships AS o, libraries AS l WHERE o.library_id = l.id AND l.user_id = ? AND o.book_id = ?;"
+    result = db.query(sql, [user_id, book_id])
+
+    return result[0]["count"] > 0 if result else False
 
 
 def search_books_from_author(author_id: int, book_name: str):

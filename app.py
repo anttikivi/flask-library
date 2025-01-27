@@ -35,6 +35,19 @@ def check_csrf():
         abort(403)
 
 
+def check_csrf_from_param():
+    token = request.args.get("token")
+    if not token:
+        abort(403)
+    if token != session["csrf_token"]:
+        abort(403)
+
+
+def check_login():
+    if "user_id" not in session:
+        abort(403)
+
+
 @app.route("/", methods=["GET"])
 def index() -> str:
     return render_template("index.html", **context, is_home=True)
@@ -262,6 +275,7 @@ def add_book() -> str | Response:
 
     if request.method == "POST":
         check_csrf()
+        check_login()
 
         if not request.form or "from-page" not in request.form:
             abort(400)
@@ -454,7 +468,9 @@ def add_book() -> str | Response:
                 selected_author = author.get_author_by_id(form_author.id)
                 if not selected_author:
                     abort(400)
-                library.add_book_to_library(selected.id, selected_author.id)
+                library.add_book_to_user(
+                    selected.id, cast(int, session["user_id"])
+                )
                 return redirect("/kirja/" + str(book_id))
             elif selected_form == "new-book":
                 form_author = author.get_author_from_form()
@@ -566,7 +582,9 @@ def add_book() -> str | Response:
                 )
                 if not lib_id:
                     abort(400)
-                library.add_book_to_library(book_id, selected_author.id)
+                library.add_book_to_user(
+                    book_id, cast(int, session["user_id"])
+                )
                 return redirect("/kirja/" + str(book_id))
             elif selected_form == "search":
                 form_author = author.get_author_from_form()
@@ -632,9 +650,37 @@ def book_page(book_id: int):
     book_author = author.get_author_by_id(book.author)
     if not book_author:
         abort(500)
-    return render_template(
-        "book.html", author=book_author, book=book, **context
+    book_class = library.get_classification_by_id(book.classification)
+    if not book_class:
+        abort(500)
+
+    owns = (
+        library.is_owner(cast(int, session["user_id"]), book_id)
+        if "user_id" in session
+        else False
     )
+    return render_template(
+        "book.html",
+        author=book_author,
+        book=book,
+        book_class=book_class,
+        owns=owns,
+        **context,
+    )
+
+
+@app.route("/add_from_book_page/", methods=["GET"])
+def add_book_from_page():
+    check_csrf_from_param()
+    check_login()
+
+    book_id = request.args.get("id")
+    if not book_id:
+        abort(400)
+
+    library.add_book_to_user(int(book_id), cast(int, session["user_id"]))
+
+    return redirect(request.referrer)
 
 
 @app.errorhandler(401)

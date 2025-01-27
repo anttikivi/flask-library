@@ -514,10 +514,38 @@ main .title:first-of-type {
   }
 }
 
+.book-page p:not(.book-author) {
+  margin: 1rem;
+  text-align: center;
+}
+
 .book-title {
   font-style: italic;
 }
 
-.book-author {
+.book-info {
+  margin: 1rem auto;
   text-align: center;
+}
+
+.book-edit-buttons {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin: 1.5rem auto;
+}
+
+@media (min-width: 768px) {
+  .book-edit-buttons {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin: 2rem auto;
+  }
+}
+
+.book-edit-buttons .button {
+  display: block;
 }
