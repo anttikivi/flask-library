@@ -8,7 +8,7 @@
     <p class="page-intro">
       Tervetuloa Flask-kirjastoon. Jos sinulla ei ole vielä käyttäjää, voit
       luoda sen
-      <a href="/luo-tili">tästä</a>.
+      <a href="/luo-tili?next={{- next_page | urlencode -}}">tästä</a>.
     </p>
     <div class="register-form-wrapper">
       <form class="register-form" method="POST">
@@ -38,6 +38,12 @@
               <input id="password" name="password" type="password" />
             </label>
           </div>
+          <input
+            id="next-page"
+            name="next-page"
+            value="{{- next_page -}}"
+            type="hidden"
+          />
           <button type="submit">Kirjaudu sisään</button>
         {% endwith %}
       </form>

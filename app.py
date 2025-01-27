@@ -180,25 +180,43 @@ def register() -> str | Response:
         password_again = request.form["password_again"]
         form_data = {"username": username}
 
+        next_page = (
+            request.form["next-page"]
+            if "next-page" in request.form
+            else "/" + username + "/"
+        )
+
+        if request.args.get("next"):
+            next_page = cast(str, request.args.get("next"))
+
         if not users.is_valid_username(username):
             flash(
                 "Käyttäjätunnus saa sisältää vain kirjaimia ja numeroita sekä yhdysmerkkejä ja alaviivoja. Se ei saa sisältää ääkkösiä. Käyttäjätunnuksen enimmäispituus on 16 merkkiä",
                 "error",
             )
             return render_template(
-                "register.html", form_data=form_data, **context
+                "register.html",
+                form_data=form_data,
+                next_page=next_page,
+                **context,
             )
 
         if password != password_again:
             flash("Salasanat eivät täsmää", "error")
             return render_template(
-                "register.html", form_data=form_data, **context
+                "register.html",
+                form_data=form_data,
+                next_page=next_page,
+                **context,
             )
 
         if users.get_users_by_name(username):
             flash("Käyttäjätunnus on jo varattu", "error")
             return render_template(
-                "register.html", form_data=form_data, **context
+                "register.html",
+                form_data=form_data,
+                next_page=next_page,
+                **context,
             )
 
         # Because I check the username's uniqueness above, there is no
@@ -219,15 +237,16 @@ def register() -> str | Response:
             session["username"] = username
             session["csrf_token"] = secrets.token_hex(16)
 
-            # TODO: Redirect to the user page.
-            return redirect("/")
+            return redirect(next_page)
 
         # If we cannot log in the user we just created, something is wrong.
         abort(500)
 
     # If the method is not "POST", I can assume it's "GET" (might also
     # be "HEAD" or "OPTIONS", but Flask takes care of those for us).
-    return render_template("register.html", **context)
+    return render_template(
+        "register.html", next_page=request.referrer, **context
+    )
 
 
 @app.route("/kirjaudu/", methods=["GET", "POST"])
@@ -237,20 +256,27 @@ def login():
         password = request.form["password"]
         form_data = {"username": username}
 
+        next_page = (
+            request.form["next-page"]
+            if "next-page" in request.form
+            else "/" + username + "/"
+        )
+
         user_id = users.check_login(username, password)
         if user_id:
             session["user_id"] = user_id
             session["username"] = username
             session["csrf_token"] = secrets.token_hex(16)
 
-            # TODO: Redirect to the user page.
-            return redirect("/")
+            return redirect(next_page)
 
         flash("Väärä käyttäjätunnus tai salasana", "error")
-        return render_template("login.html", form_data=form_data, **context)
+        return render_template(
+            "login.html", form_data=form_data, next_page=next_page, **context
+        )
 
     # If the method is not "POST", it's "GET".
-    return render_template("login.html", **context)
+    return render_template("login.html", next_page=request.referrer, **context)
 
 
 @app.route("/logout/", methods=["GET"])
@@ -258,7 +284,10 @@ def logout() -> Response:
     if "user_id" in session:
         del session["user_id"]
         del session["username"]
-    return redirect("/")
+    # TODO: Is using the referrer here the best solution? At least for
+    # now it helps catching any routes that user might be able to access
+    # without logging in.
+    return redirect(request.referrer)
 
 
 ########################################################################
