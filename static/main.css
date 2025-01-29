@@ -308,6 +308,10 @@ main .title:first-of-type {
   text-align: center;
 }
 
+.page-intro.library-intro {
+  margin: 1rem auto 3rem;
+}
+
 .page-intro > p {
   margin: 1rem auto;
 }
@@ -565,6 +569,14 @@ main .title:first-of-type {
   grid-template-columns: repeat(5, minmax(100px, 1fr));
 }
 
+.library-listing {
+  grid-template-columns: repeat(5, minmax(100px, 1fr));
+}
+
+.library-listing.logged-in {
+  grid-template-columns: repeat(6, minmax(100px, 1fr));
+}
+
 .book-listing a {
   color: currentColor;
 }
@@ -597,7 +609,7 @@ main .title:first-of-type {
   gap: 1rem;
 }
 
-@media (min-width: 768px) {
-  .book-listing .actions {
-  }
+.to-full-listing {
+  margin: 2rem auto;
+  text-align: center;
 }

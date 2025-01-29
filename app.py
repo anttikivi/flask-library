@@ -1,3 +1,4 @@
+import math
 import os
 import secrets
 from collections.abc import Sequence
@@ -296,6 +297,39 @@ def logout() -> Response:
     # now it helps catching any routes that user might be able to access
     # without logging in.
     return redirect(request.referrer)
+
+
+########################################################################
+# LIBRARY PAGES
+########################################################################
+
+
+@app.route("/kirjasto/", defaults={"page": None}, methods=["GET"])
+@app.route("/kirjasto/<int:page>/", methods=["GET"])
+def library_page(page: int | None):
+    per_page = request.args.get("per_page")
+    book_count = library.get_book_count()
+    page_size = 10
+    if per_page:
+        page_size = int(per_page)
+
+    page_count = math.ceil(book_count / page_size)
+
+    if page and page <= 1:
+        # I want the default URL to be clean.
+        return redirect("/kirjasto")
+
+    # Set the correct page after checking for the redirection so that we
+    # don't get infinite loop.
+    if not page or page <= 1:
+        page = 1
+
+    if page > page_count:
+        return redirect(f"/kirjasto/{page_count}")
+
+    books = library.get_books(page, page_size)
+
+    return render_template("library.html", books=books, **context)
 
 
 ########################################################################

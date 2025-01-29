@@ -1,31 +1,29 @@
 {% extends "layout.html" %}
 
-{% block title %}Etusivu{% endblock %}
+{% block title %}Kirjasto{% endblock %}
 
 {% block content %}
   <div class="container">
-    <h2 class="page-title">Tervetuloa Flask-kirjastoon!</h2>
-    <div class="page-intro">
+    <h2 class="page-title">Kirjasto</h2>
+    <div class="page-intro library-intro">
       <p>
-        Flask-kirjastossa voit laittaa henkilökohtaisen kirjastosi järjestykseen
-        ja kurkkia muiden kirjastoihin.
+        Tällä sivulla voit selata kaikkia kirjastotietokannassa olevia kirjoja.
+        Lista on koostettu kaikkien käyttäjien kirjastoista.
       </p>
-      {% if session.user_id %}
-        {# TODO: Show useful info here. #}
-        <p>Olet kirjautunut sisään.</p>
-        {% include "library_status_widget.html" %}
-      {% else %}
+      {% if not session.user_id %}
         <p>
-          Aloita <a href="/kirjaudu">kirjautumalla sisään</a> tai
+          Luo oma kirjastosi <a href="/kirjaudu">kirjautumalla sisään</a> tai
           <a href="/luo-tili">luomalla tili</a>.
         </p>
       {% endif %}
     </div>
 
-    <h2 class="title">Suosituimmat kirjat</h2>
-    <div class="book-listing{{ ' logged-in' if session.user_id else '' }}">
+    <div
+      class="book-listing library-listing{{ ' logged-in' if session.user_id else '' }}"
+    >
       <div class="heading-row">Kirjan nimi</div>
       <div class="heading-row">Kirjoittaja</div>
+      <div class="heading-row">Luokka</div>
       <div class="heading-row">Kirjastoissa yhteensä</div>
       {% if session.user_id %}
         <div class="heading-row">Sinulla</div>
@@ -35,6 +33,7 @@
       {% for book in books %}
         <div><a href="/kirja/{{- book.id -}}">{{ book.name }}</a></div>
         <div>{{ book.author }}</div>
+        <div>{{ book.classification }}</div>
         <div>
           {{- book.count -}}{{- " " -}}{{- "kappale" if book.count == 1 else "kappaletta" -}}
         </div>
@@ -73,9 +72,6 @@
           {% endif %}
         </div>
       {% endfor %}
-    </div>
-    <div class="to-full-listing">
-      <a class="button" href="/kirjasto">Kaikki kirjat</a>
     </div>
   </div>
 {% endblock %}

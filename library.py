@@ -109,6 +109,53 @@ def remove_books_from_user(book_id: int, user_id: int, count: int = 1):
     db.execute(sql, [book_id, user_id, count])
 
 
+def get_book_count() -> int:
+    sql = "SELECT COUNT(id) FROM books"
+    result = db.query(sql)
+    return result[0]["COUNT(id)"] if result else 0
+
+
+def get_books(page: int, page_size: int):
+    sql = """
+        SELECT
+            b.id,
+            b.isbn,
+            b.name,
+            IFNULL(a.first_name, '') || ' ' || a.surname AS author,
+            c.label AS classification,
+            COUNT(o.id) AS total
+        FROM books AS b
+        JOIN book_ownerships AS o ON b.id = o.book_id
+        JOIN authors AS a ON b.author_id = a.id
+        JOIN classification AS c ON b.class_id = c.id
+        GROUP BY b.id
+        ORDER BY
+            a.surname ASC,
+            a.first_name ASC,
+            b.name ASC,
+            classification ASC,
+            total DESC
+        LIMIT ? OFFSET ?
+    """
+    limit = page_size
+    offset = page_size * (page - 1)
+    result = db.query(sql, [limit, offset])
+    books: list[CountBook] = []
+    for b in cast(Sequence[CountBooksResult], result):
+        books.append(
+            CountBook(
+                id=b["id"],
+                isbn=b["isbn"],
+                name=b["name"],
+                author=b["author"],
+                classification=b["classification"],
+                count=b["total"],
+            )
+        )
+
+    return books
+
+
 def get_book_by_id(id: int) -> Book | None:
     sql = "SELECT id, isbn, name, author_id, class_id FROM books WHERE id = ?"
     result = db.query(sql, [id])
