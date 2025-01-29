@@ -50,7 +50,15 @@ def check_login():
 
 @app.route("/", methods=["GET"])
 def index() -> str:
-    return render_template("index.html", **context, is_home=True)
+    books = library.get_popular_books(10)
+    owned: Sequence[library.BookIDCounts] = []
+    if "user_id" in session:
+        owned = library.get_owned_book_counts_by_id(
+            cast(int, session["user_id"])
+        )
+    return render_template(
+        "index.html", books=books, owned=owned, is_home=True, **context
+    )
 
 
 ########################################################################
@@ -676,10 +684,10 @@ def book_page(book_id: int):
     book = library.get_book_by_id(book_id)
     if not book:
         abort(404)
-    book_author = author.get_author_by_id(book.author)
+    book_author = author.get_author_by_id(book.author_id)
     if not book_author:
         abort(500)
-    book_class = library.get_classification_by_id(book.classification)
+    book_class = library.get_classification_by_id(book.class_id)
     if not book_class:
         abort(500)
 
@@ -698,16 +706,32 @@ def book_page(book_id: int):
     )
 
 
-@app.route("/add_from_book_page/", methods=["GET"])
-def add_book_from_page():
+@app.route("/add-one-book/", methods=["GET"])
+def add_one_book():
     check_csrf_from_param()
     check_login()
 
     book_id = request.args.get("id")
-    if not book_id:
+    user_id = cast(int, session["user_id"])
+    if not book_id or not user_id:
         abort(400)
 
-    library.add_book_to_user(int(book_id), cast(int, session["user_id"]))
+    library.add_book_to_user(int(book_id), user_id)
+
+    return redirect(request.referrer)
+
+
+@app.route("/delete-one-book/", methods=["GET"])
+def delete_one_book():
+    check_csrf_from_param()
+    check_login()
+
+    book_id = request.args.get("id")
+    user_id = cast(int, session["user_id"])
+    if not book_id or not user_id:
+        abort(400)
+
+    library.remove_books_from_user(int(book_id), user_id, 1)
 
     return redirect(request.referrer)
 

@@ -21,5 +21,58 @@
         </p>
       {% endif %}
     </div>
+
+    <h2 class="title">Suosituimmat kirjat</h2>
+    <div class="book-listing{{ ' logged-in' if session.user_id else '' }}">
+      <div class="heading-row">Kirjan nimi</div>
+      <div class="heading-row">Kirjoittaja</div>
+      <div class="heading-row">Kirjastoissa yhteensä</div>
+      {% if session.user_id %}
+        <div class="heading-row">Sinulla</div>
+      {% endif %}
+      <div class="heading-row">Toiminnot</div>
+
+      {% for book in books %}
+        <div><a href="/kirja/{{- book.id -}}">{{ book.name }}</a></div>
+        <div>{{ book.author }}</div>
+        <div>
+          {{- book.count -}}{{- " " -}}{{- "kappale" if book.count == 1 else "kappaletta" -}}
+        </div>
+        {% if session.user_id %}
+          {% set ns = namespace(count=0) %}
+          {% for o in owned %}
+            {% if o.id == book.id %}
+              {% set ns.count = o.count %}
+            {% endif %}
+          {% endfor %}
+          <div>
+            {{- ns.count -}}{{- " " -}}{{- "kappale" if ns.count == 1 else "kappaletta" -}}
+          </div>
+        {% endif %}
+        <div class="actions">
+          <div>
+            <a href="/kirja/{{- book.id -}}">Kirjan tiedot</a>
+          </div>
+          {% if session.user_id %}
+            <div>
+              <a
+                href="/add-one-book?id={{- book.id -}}&token={{- session.csrf_token -}}"
+                >Lisää kappale kirjastoosi</a
+              >
+            </div>
+            {% for o in owned %}
+              {% if o.id == book.id %}
+                <div>
+                  <a
+                    href="/delete-one-book?id={{- o.id -}}&token={{- session.csrf_token -}}"
+                    >Poista kappale omasta kirjastostasi</a
+                  >
+                </div>
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
   </div>
 {% endblock %}

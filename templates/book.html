@@ -16,13 +16,12 @@
         {% if owns %}
           <a class="button">Korjaa kirjan tietoja</a
           ><a class="button">Korjaa kirjan luokitus</a>
-        {% else %}
-          <a
-            class="button"
-            href="/add_from_book_page?id={{- book.id -}}&token={{- session.csrf_token -}}"
-            >Lisää omaan kirjastoosi</a
-          >
         {% endif %}
+        <a
+          class="button"
+          href="/add-one-book?id={{- book.id -}}&token={{- session.csrf_token -}}"
+          >Lisää kappale kirjastoosi</a
+        >
       </div>
     {% else %}
       <p>

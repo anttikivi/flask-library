@@ -549,3 +549,51 @@ main .title:first-of-type {
 .book-edit-buttons .button {
   display: block;
 }
+
+.book-listing {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(100px, 1fr));
+  column-gap: 1rem;
+  row-gap: 2rem;
+}
+
+.book-listing.logged-in {
+  grid-template-columns: repeat(5, minmax(100px, 1fr));
+}
+
+.book-listing a {
+  color: currentColor;
+}
+
+.book-listing a {
+  color: currentColor;
+}
+
+.book-listing a:hover,
+.book-listing a:focus {
+  color: var(--color-purple-700);
+}
+
+@media (prefers-color-scheme: dark) {
+  .book-listing a:hover,
+  .book-listing a:focus {
+    color: var(--color-purple-400);
+  }
+}
+
+.book-listing .heading-row {
+  font-weight: bold;
+}
+
+.book-listing .actions {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .book-listing .actions {
+  }
+}
