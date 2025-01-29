@@ -66,7 +66,7 @@ def index() -> str:
 ########################################################################
 
 
-@app.route("/kayttaja/<string:username>", methods=["GET"])
+@app.route("/kayttaja/<string:username>/", methods=["GET"])
 def user_page(username: str):
     user = users.get_users_by_name(username)
     if not user:
