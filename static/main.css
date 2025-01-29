@@ -63,6 +63,10 @@ h6 {
   font-family: var(--font-serif);
 }
 
+a {
+  color: currentColor;
+}
+
 a:visited {
   color: currentColor;
 }
