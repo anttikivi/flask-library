@@ -9,9 +9,12 @@ While this project uses English for development, the user-facing web application
 will be implemented in Finnish and using the
 [Finnish Public Libraries Classification System](https://finto.fi/ykl/fi/).
 
+### Planned Features
+
 As of right now, here is the list of the planned features. As the development
 progresses, I’ll mark the checkboxes as the features in question get
-implemented.
+implemented. The features that will be implemented might change during
+development.
 
 - [x] The user can create an account and log in.
 - [ ] Only some information of the user libraries are shown without logging. As
