@@ -45,7 +45,7 @@ def check_csrf_from_param():
 
 def check_login():
     if "user_id" not in session:
-        abort(403)
+        abort(401)
 
 
 @app.route("/", methods=["GET"])
