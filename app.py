@@ -77,9 +77,10 @@ def user_page(username: str):
 
 @app.route("/asetukset/", methods=["GET", "POST"])
 def edit_user():
-    username: str = session["username"]
     if "username" not in session:
         abort(401)
+
+    username: str = session["username"]
 
     user = users.get_users_by_name(username)
     if not user:
