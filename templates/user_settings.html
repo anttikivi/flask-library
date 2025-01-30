@@ -46,6 +46,7 @@
             </label>
           </div>
           <input type="hidden" name="what" value="username" />
+          {% include "csrf_token.html" %}
           <button type="submit">Vaihda käyttäjätunnus</button>
         {% endwith %}
       </form>
@@ -95,6 +96,7 @@
             </label>
           </div>
           <input type="hidden" name="what" value="password" />
+          {% include "csrf_token.html" %}
           <button type="submit">Vaihda salasana</button>
         {% endwith %}
       </form>
