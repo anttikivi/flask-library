@@ -564,6 +564,12 @@ main .title:first-of-type {
   display: block;
 }
 
+.listing-container {
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
 .book-listing {
   display: grid;
   grid-template-columns: repeat(4, minmax(100px, 1fr));
