@@ -53,6 +53,7 @@
         {%- endif -%}
         <div class="links">
           {% if session.user_id %}
+            <a href="/lisaa-kirja">Lisää kirja</a>
             <a href="/kayttaja/{{- session.username -}}">Oma sivu</a>
             <a href="/logout">Kirjaudu ulos</a>
           {% else %}
