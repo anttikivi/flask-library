@@ -796,6 +796,11 @@ def handle_unauthorized(_: object):
     return render_template("401.html", **context), 401
 
 
+@app.errorhandler(403)
+def handle_not_forbidden(_: object):
+    return render_template("403.html", **context), 403
+
+
 @app.errorhandler(404)
 def handle_not_found(_: object):
     return render_template("404.html", **context), 404
