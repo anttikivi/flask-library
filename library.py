@@ -95,6 +95,11 @@ def add_book_to_user(book_id: int, user_id: int):
     db.execute(sql, [book_id, user_id])
 
 
+def update_book_name(book_id: int, new_name: str):
+    sql = "UPDATE books SET name = ? WHERE id = ?"
+    db.execute(sql, [new_name, book_id])
+
+
 def remove_books_from_user(book_id: int, user_id: int, count: int = 1):
     sql = """
         DELETE FROM book_ownerships

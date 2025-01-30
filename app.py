@@ -762,6 +762,70 @@ def book_page(book_id: int):
     )
 
 
+@app.route("/kirja/<int:book_id>/muokkaa/", methods=["GET", "POST"])
+def edit_book(book_id: int):
+    check_login()
+
+    book = library.get_book_by_id(book_id)
+    if not book:
+        abort(404)
+    book_author = author.get_author_by_id(book.author_id)
+    if not book_author:
+        abort(500)
+    book_class = library.get_classification_by_id(book.class_id)
+    if not book_class:
+        abort(500)
+
+    owns = (
+        library.is_owner(cast(int, session["user_id"]), book_id)
+        if "user_id" in session
+        else False
+    )
+
+    if not owns:
+        abort(403)
+
+    if request.method == "POST":
+        check_csrf()
+
+        if "what" not in request.form:
+            abort(400)
+        what = request.form["what"]
+        if what != "name":
+            abort(400)
+
+        if what == "name":
+            new_name = request.form["name"]
+            if not new_name:
+                flash("Sinun tulee antaa nimi", "name")
+                return render_template(
+                    "edit_book.html",
+                    book=book,
+                    author=book_author,
+                    book_class=book_class,
+                    **context,
+                )
+
+            library.update_book_name(book_id, new_name)
+            book = library.get_book_by_id(book_id)
+            if not book:
+                abort(500)
+            book_author = author.get_author_by_id(book.author_id)
+            if not book_author:
+                abort(500)
+            book_class = library.get_classification_by_id(book.class_id)
+            if not book_class:
+                abort(500)
+
+    return render_template(
+        "edit_book.html",
+        book=book,
+        author=book_author,
+        book_class=book_class,
+        **context,
+    )
+
+
 @app.route("/add-one-book/", methods=["GET"])
 def add_one_book():
     check_csrf_from_param()

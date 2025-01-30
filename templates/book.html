@@ -14,7 +14,8 @@
     {% if session.user_id %}
       <div class="book-edit-buttons">
         {% if owns %}
-          <a class="button">Korjaa kirjan tietoja</a
+          <a class="button" href="/kirja/{{- book.id -}}/muokkaa"
+            >Korjaa kirjan tietoja</a
           ><a class="button">Korjaa kirjan luokitus</a>
         {% endif %}
         <a

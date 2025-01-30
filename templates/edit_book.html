@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+
+{% block title %}Korjaa kirjan tietoja{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <h1 class="page-title">Korjaa kirjan tietoja</h1>
+    <p class="book-info">Kirja: {{ book.name -}}.</p>
+    <p class="book-info">
+      Kirjoittaja:{{ " " }}{{- author.first_name + " " if author.first_name else "" -}}{{ author.surname -}}
+    </p>
+    <p class="book-info">
+      Luokitus:{{ " " }}{{- book_class.key -}}{{ " " }}{{- book_class.label -}}
+    </p>
+    <h2 class="title">Korjaa kirjan nimi</h2>
+    <div class="register-form-wrapper">
+      <form class="register-form edit-form" method="POST">
+        {% with errors = get_flashed_messages(category_filter=["name"]) %}
+          {% if errors %}
+            <h3 class="sr-only">Lomakkeessa olleet virheet</h3>
+            <ul class="flashes">
+              {% for msg in errors %}
+                <li class="error">{{ msg }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+          <div>
+            <label
+              {{ ' class="label-error"' | safe if "nimi" in errors | first | lower else "" }}
+              for="name"
+            >
+              <span>Uusi nimi</span>
+              <input id="name" name="name" type="text" />
+            </label>
+          </div>
+          <input type="hidden" name="what" value="name" />
+          {% include "csrf_token.html" %}
+          <button type="submit">Vaihda nimi</button>
+        {% endwith %}
+      </form>
+    </div>
+  </div>
+{% endblock %}
