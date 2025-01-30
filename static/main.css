@@ -716,3 +716,7 @@ main .title:first-of-type {
   align-items: center;
   margin: 4rem auto;
 }
+
+.library-nav a.current {
+  font-weight: bold;
+}
