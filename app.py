@@ -335,6 +335,11 @@ def library_page(page: int | None):
         return redirect(f"/kirjasto/{page_count}{params}")
 
     books = library.get_books(page, page_size)
+    owned: Sequence[library.BookIDCounts] = []
+    if "user_id" in session:
+        owned = library.get_owned_book_counts_by_id(
+            cast(int, session["user_id"])
+        )
 
     return render_template(
         "library.html",
@@ -343,6 +348,7 @@ def library_page(page: int | None):
         page_count=page_count,
         page_size=page_size,
         add_per_page_param=add_per_page_param,
+        owned=owned,
         **context,
     )
 
