@@ -315,9 +315,16 @@ def library_page(page: int | None):
 
     page_count = math.ceil(book_count / page_size)
 
-    if page and page <= 1:
+    add_per_page_param = False
+
+    params: str = ""
+    if per_page:
+        params = f"?per_page={per_page}"
+        add_per_page_param = True
+
+    if (page and page <= 1) or "reset_page" in request.args:
         # I want the default URL to be clean.
-        return redirect("/kirjasto")
+        return redirect(f"/kirjasto{params}")
 
     # Set the correct page after checking for the redirection so that we
     # don't get infinite loop.
@@ -325,11 +332,19 @@ def library_page(page: int | None):
         page = 1
 
     if page > page_count:
-        return redirect(f"/kirjasto/{page_count}")
+        return redirect(f"/kirjasto/{page_count}{params}")
 
     books = library.get_books(page, page_size)
 
-    return render_template("library.html", books=books, **context)
+    return render_template(
+        "library.html",
+        books=books,
+        page=page,
+        page_count=page_count,
+        page_size=page_size,
+        add_per_page_param=add_per_page_param,
+        **context,
+    )
 
 
 ########################################################################

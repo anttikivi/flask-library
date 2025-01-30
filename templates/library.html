@@ -73,5 +73,30 @@
         </div>
       {% endfor %}
     </div>
+    <div class="library-nav">
+      <div>
+        Näytä per sivu:
+        <a href="/kirjasto/{{- page -}}?per_page=5&reset_page">5</a>
+        <a href="/kirjasto/{{- page -}}?per_page=10&reset_page">10</a>
+        <a href="/kirjasto/{{- page -}}?per_page=20&reset_page">20</a>
+        <a href="/kirjasto/{{- page -}}?per_page=50&reset_page">50</a>
+        <a href="/kirjasto/{{- page -}}?per_page=100&reset_page">100</a>
+      </div>
+      <div>
+        {% if page > 1 %}
+          <a
+            href="/kirjasto/{{- page - 1 -}}{{- '?per_page=' + (page_size | string) if add_per_page_param -}}"
+            >&lt;&lt;</a
+          >
+        {% endif %}
+        Sivu {{ page -}}/{{- page_count }}
+        {% if page < page_count %}
+          <a
+            href="/kirjasto/{{- page + 1 -}}{{- '?per_page=' + (page_size | string) if add_per_page_param -}}"
+            >&gt;&gt;</a
+          >
+        {% endif %}
+      </div>
+    </div>
   </div>
 {% endblock %}

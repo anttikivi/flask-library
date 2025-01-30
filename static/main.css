@@ -617,3 +617,10 @@ main .title:first-of-type {
   margin: 2rem auto;
   text-align: center;
 }
+
+.library-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 4rem auto;
+}
