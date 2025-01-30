@@ -269,6 +269,10 @@ a.button:focus {
   }
 }
 
+.footer {
+  margin: 3rem auto;
+}
+
 .page-title {
   text-align: center;
   font-size: 2.3rem;
