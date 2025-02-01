@@ -100,6 +100,11 @@ def update_book_name(book_id: int, new_name: str):
     db.execute(sql, [new_name, book_id])
 
 
+def update_book_author(book_id: int, new_author_id: int):
+    sql = "UPDATE books SET author_id = ? WHERE id = ?"
+    db.execute(sql, [new_author_id, book_id])
+
+
 def remove_books_from_user(book_id: int, user_id: int, count: int = 1):
     sql = """
         DELETE FROM book_ownerships
@@ -135,6 +140,7 @@ def get_books(page: int, page_size: int):
         JOIN classification AS c ON b.class_id = c.id
         GROUP BY b.id
         ORDER BY
+            c.key ASC,
             a.surname ASC,
             a.first_name ASC,
             b.name ASC,
@@ -192,7 +198,7 @@ def get_popular_books(count: int) -> Sequence[CountBook]:
         JOIN authors AS a ON b.author_id = a.id
         JOIN classification AS c ON b.class_id = c.id
         GROUP BY b.id
-        ORDER BY total DESC, author ASC, b.name ASC
+        ORDER BY total DESC, c.key ASC, author ASC, b.name ASC
         LIMIT ?
     """
     result = db.query(sql, [count])

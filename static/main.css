@@ -422,6 +422,10 @@ main .title:first-of-type {
   }
 }
 
+.form-subtitle {
+  text-align: center;
+}
+
 .author-select > div {
   margin: 1rem auto;
 }

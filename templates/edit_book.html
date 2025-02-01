@@ -39,5 +39,168 @@
         {% endwith %}
       </form>
     </div>
+    <h2 class="title">Korjaa kirjoittaja</h2>
+    {% if not author_results %}
+      <div class="register-form-wrapper edit-form">
+        <form class="register-form" method="POST">
+          {% with errors = get_flashed_messages(category_filter=["author"]) %}
+            {% if errors %}
+              <h3 class="sr-only">Lomakkeessa olleet virheet</h3>
+              <ul class="flashes">
+                {% for msg in errors %}
+                  <li class="error">{{ msg }}</li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+            <p>Tähdellä (*) merkityt kentät ovat pakollisia.</p>
+            <div>
+              <label for="first-name-search">
+                <span>Etunimi</span>
+                <input
+                  id="first-name-search"
+                  name="first-name-search"
+                  type="text"
+                  value="{{- form_data.author.first_name if form_data and 'author' in form_data and 'first_name' in form_data.author -}}"
+                />
+              </label>
+            </div>
+            <div>
+              <label
+                {{ ' class="label-error"' | safe if "sukunimi" in errors | first | lower else "" }}
+                for="surname-search"
+              >
+                <span>Sukunimi tai nimimerkki *</span>
+                <input
+                  id="surname-search"
+                  name="surname-search"
+                  type="text"
+                  required
+                />
+              </label>
+            </div>
+            <input type="hidden" name="what" value="author" />
+            {% include "csrf_token.html" %}
+            <button type="submit">Hae</button>
+          {% endwith %}
+        </form>
+      </div>
+    {% else %}
+      <h3 class="form-subtitle">Valitse kirjoittaja tai luo uusi</h3>
+      <div class="page-intro">
+        {% if authors %}
+          <p>
+            Haulla löytyi seuraavat tulokset. Valitse niistä sopiva kirjoittaja
+            tai luo uusi.
+          </p>
+        {% else %}
+          <p>Haulla ei löytynyt tuloksia. Lisää uusi kirjailija.</p>
+        {% endif %}
+      </div>
+      {% with errors = get_flashed_messages(category_filter=["author"]) %}
+        {% if errors %}
+          <h3 class="sr-only">Lomakkeessa olleet virheet</h3>
+          <ul class="flashes">
+            {% for msg in errors %}
+              <li class="error">{{ msg }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+
+        {% if authors %}
+          <div class="register-form-wrapper edit-form">
+            <form class="register-form" method="POST">
+              <fieldset class="author-select">
+                <legend>Valitse kirjoittaja</legend>
+                <div>
+                  {% for author in authors %}
+                    <div class="author-wrapper">
+                      <div class="label-wrapper">
+                        <label for="author-{{- author.id -}}"
+                          ><span class="surname">{{- author.surname -}}</span
+                          >{% if author.first_name -%}
+                            {{ ", " }}<span>{{- author.first_name -}}</span>
+                          {% endif %}</label
+                        >
+                      </div>
+                      <div class="input-wrapper">
+                        <input
+                          id="author-{{- author.id -}}"
+                          name="author"
+                          type="radio"
+                          value="{{- author.id -}}"
+                        />
+                      </div>
+                    </div>
+                  {% endfor %}
+                </div>
+              </fieldset>
+              <input
+                id="selected-form"
+                name="selected-form"
+                value="select-author"
+                type="hidden"
+              />
+              <input
+                id="last-first-name"
+                name="last-first-name"
+                value="{{- form_data.author.first_name -}}"
+                type="hidden"
+              />
+              <input
+                id="last-surname"
+                name="last-surname"
+                value="{{- form_data.author.surname -}}"
+                type="hidden"
+              />
+              <input type="hidden" name="what" value="author-update" />
+              {% include "csrf_token.html" %}
+              <button type="submit">Valitse kirjoittaja</button>
+            </form>
+          </div>
+        {% endif %}
+
+        <div class="register-form-wrapper edit-form">
+          <h3 class="form-subtitle">Luo uusi kirjoittaja</h3>
+          <form class="register-form" method="POST">
+            <p>Tähdellä (*) merkityt kentät ovat pakollisia.</p>
+            <div>
+              <label for="first-name">
+                <span>Etunimi</span>
+                <input
+                  id="first-name"
+                  name="first-name"
+                  type="text"
+                  value="{{- form_data.author.first_name -}}"
+                />
+              </label>
+            </div>
+            <div>
+              <label
+                {{ ' class="label-error"' | safe if "sukunimi" in errors | first | lower else "" }}
+                for="surname"
+              >
+                <span>Sukunimi tai nimimerkki *</span>
+                <input
+                  id="surname"
+                  name="surname"
+                  type="text"
+                  value="{{- form_data.author.surname -}}"
+                  required
+                />
+              </label>
+            </div>
+            <input
+              id="selected-form"
+              name="selected-form"
+              value="new-author"
+              type="hidden"
+            />
+            <input type="hidden" name="what" value="author-update" />
+            {% include "csrf_token.html" %}
+            <button type="submit">Luo kirjoittaja</button>
+          </form>
+        </div>
+      {% endwith %}
+    {% endif %}
   </div>
 {% endblock %}

@@ -791,7 +791,7 @@ def edit_book(book_id: int):
         if "what" not in request.form:
             abort(400)
         what = request.form["what"]
-        if what != "name":
+        if what != "name" and what != "author" and what != "author-update":
             abort(400)
 
         if what == "name":
@@ -816,6 +816,140 @@ def edit_book(book_id: int):
             book_class = library.get_classification_by_id(book.class_id)
             if not book_class:
                 abort(500)
+
+        if what == "author":
+            first_name = request.form["first-name-search"]
+            if (
+                "surname-search" not in request.form
+                or not request.form["surname-search"]
+            ):
+                flash("Anna sukunimi tai nimimerkki", "author")
+                form_data = {"author": {"first_name": first_name}}
+                return render_template(
+                    "edit_book.html",
+                    form_data=form_data,
+                    book=book,
+                    author=book_author,
+                    book_class=book_class,
+                    **context,
+                )
+            surname = request.form["surname-search"]
+            authors: Sequence[author.Author] = []
+            author_match = author.get_author(
+                request.form["first-name-search"],
+                request.form["surname-search"],
+            )
+            if author_match:
+                authors.append(author_match)
+
+            if not authors:
+                authors = author.seach_author(
+                    request.form["first-name-search"],
+                    request.form["surname-search"],
+                )
+            form_data = {
+                "author": {"first_name": first_name, "surname": surname}
+            }
+            print("Rendering the search results ")
+            return render_template(
+                "edit_book.html",
+                form_data=form_data,
+                book=book,
+                author=book_author,
+                book_class=book_class,
+                authors=authors,
+                author_results=True,
+                **context,
+            )
+
+        if what == "author-update":
+            if "selected-form" not in request.form:
+                abort(400)
+
+            selected_form = request.form["selected-form"]
+            if selected_form == "select-author":
+                if "author" not in request.form or not request.form["author"]:
+                    flash(
+                        "Sinun tulee valita kirjoittaja tai luoda uusi",
+                        "author",
+                    )
+                    first_name = request.form["last-first-name"]
+                    surname = request.form["last-surname"]
+                    authors = []
+                    author_match = author.get_author(first_name, surname)
+                    if author_match:
+                        authors.append(author_match)
+
+                    if not authors:
+                        authors = author.seach_author(first_name, surname)
+                    form_data = {
+                        "author": {
+                            "first_name": first_name,
+                            "surname": surname,
+                        }
+                    }
+                    return render_template(
+                        "add_book.html",
+                        form_data=form_data,
+                        book=book,
+                        author=book_author,
+                        book_class=book_class,
+                        authors=authors,
+                        author_results=True,
+                        **context,
+                    )
+                author_id = int(request.form["author"])
+                selected = author.get_author_by_id(author_id)
+                if not selected:
+                    abort(500)
+                library.update_book_author(
+                    book_id=book_id, new_author_id=selected.id
+                )
+                return redirect(f"/kirja/{book_id}/muokkaa")
+            elif selected_form == "new-author":
+                first_name = request.form["first-name"]
+                if (
+                    "surname" not in request.form
+                    or not request.form["surname"]
+                ):
+                    flash("Anna sukunimi tai nimimerkki", "author")
+                    first_name = request.form["first-name"]
+                    surname = ""
+                    authors = []
+                    author_match = author.get_author(first_name, surname)
+                    if author_match:
+                        authors.append(author_match)
+
+                    if not authors:
+                        authors = author.seach_author(first_name, surname)
+                    form_data = {
+                        "author": {
+                            "first_name": first_name,
+                            "surname": surname,
+                        }
+                    }
+                    return render_template(
+                        "add_book.html",
+                        form_data=form_data,
+                        book=book,
+                        author=book_author,
+                        book_class=book_class,
+                        authors=authors,
+                        author_results=True,
+                        **context,
+                    )
+
+                surname = request.form["surname"]
+                author.create_author(first_name, surname)
+                created = author.get_author_by_id(db.last_insert_id())
+                if not created:
+                    abort(500)
+                library.update_book_author(
+                    book_id=book_id, new_author_id=created.id
+                )
+                return redirect(f"/kirja/{book_id}/muokkaa")
+            else:
+                abort(400)
 
     return render_template(
         "edit_book.html",
