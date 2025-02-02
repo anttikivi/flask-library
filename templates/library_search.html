@@ -1,31 +1,26 @@
 {% extends "layout.html" %}
 
-{% block title %}Kirjasto{% endblock %}
+{% block title %}Kirjojen haku{% endblock %}
 
 {% block content %}
   <div class="container">
-    <h2 class="page-title">Kirjasto</h2>
+    <h2 class="page-title">Kirjojen haku</h2>
     <div class="page-intro library-intro">
-      <p>
-        Tällä sivulla voit selata kaikkia kirjastotietokannassa olevia kirjoja.
-        Lista on koostettu kaikkien käyttäjien kirjastoista.
-      </p>
+      <p>Tällä sivulla voit hakea kirjoja ja katsoa hakutuloksia.</p>
       {% if not session.user_id %}
         <p>
           Luo oma kirjastosi <a href="/kirjaudu">kirjautumalla sisään</a> tai
           <a href="/luo-tili">luomalla tili</a>.
         </p>
       {% endif %}
-      {# TODO: Add the advanced search. #}
-      <p>
-        Käytä alla olevaa hakua, jos haluat etsiä kirjaa nimen perusteella.
-        Muussa tapauksessa voit siirtyä
-        <a>edistyneeseen hakuun</a>.
-      </p>
     </div>
   </div>
   <div class="search-form-wrapper">
-    <form class="search-form" action="/kirjasto/haku" method="POST">
+    <form
+      class="search-form"
+      action="/kirjasto/haku{{- page_params if page_params else '' -}}"
+      method="POST"
+    >
       {% with errors = get_flashed_messages(category_filter=["name"]) %}
         {% if errors %}
           <h3 class="sr-only">Lomakkeessa olleet virheet</h3>
@@ -110,41 +105,41 @@
         Näytä per sivu:
         <a
           class="{{- 'current' if page_size == 5 -}}"
-          href="/kirjasto/{{- page -}}?per_page=5&reset_page"
+          href="/kirjasto/haku/{{- page -}}?per_page=5&reset_page{{- '&' + search_params if search_params else '' -}}"
           >5</a
         >
         <a
           class="{{- 'current' if page_size == 10 -}}"
-          href="/kirjasto/{{- page -}}?per_page=10&reset_page"
+          href="/kirjasto/haku/{{- page -}}?per_page=10&reset_page{{- '&' + search_params if search_params else '' -}}"
           >10</a
         >
         <a
           class="{{- 'current' if page_size == 20 -}}"
-          href="/kirjasto/{{- page -}}?per_page=20&reset_page"
+          href="/kirjasto/haku/{{- page -}}?per_page=20&reset_page{{- '&' + search_params if search_params else '' -}}"
           >20</a
         >
         <a
           class="{{- 'current' if page_size == 50 -}}"
-          href="/kirjasto/{{- page -}}?per_page=50&reset_page"
+          href="/kirjasto/haku/{{- page -}}?per_page=50&reset_page{{- '&' + search_params if search_params else '' -}}"
           >50</a
         >
         <a
           class="{{- 'current' if page_size == 100 -}}"
-          href="/kirjasto/{{- page -}}?per_page=100&reset_page"
+          href="/kirjasto/haku/{{- page -}}?per_page=100&reset_page{{- '&' + search_params if search_params else '' -}}"
           >100</a
         >
       </div>
       <div>
         {% if page > 1 %}
           <a
-            href="/kirjasto/{{- page - 1 -}}{{- '?per_page=' + (page_size | string) if add_per_page_param -}}"
+            href="/kirjasto/haku/{{- page - 1 -}}{{- '?per_page=' + (page_size | string) if add_per_page_param -}}{{- ('&' if add_per_page_param else '?') + search_params if search_params else '' -}}"
             >&lt;&lt;</a
           >
         {% endif %}
         Sivu {{ page -}}/{{- page_count }}
         {% if page < page_count %}
           <a
-            href="/kirjasto/{{- page + 1 -}}{{- '?per_page=' + (page_size | string) if add_per_page_param -}}"
+            href="/kirjasto/haku/{{- page + 1 -}}{{- '?per_page=' + (page_size | string) if add_per_page_param -}}{{- ('&' if add_per_page_param else '?') + search_params if search_params else '' -}}"
             >&gt;&gt;</a
           >
         {% endif %}

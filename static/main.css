@@ -741,3 +741,87 @@ main .title:first-of-type {
 .library-nav a.current {
   font-weight: bold;
 }
+
+.search-form-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.search-form-wrapper h3 {
+  font-size: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .search-form-wrapper h3 {
+    font-size: 2rem;
+  }
+}
+
+.search-form {
+  display: block;
+  margin: 2rem auto;
+}
+
+.search-form > div {
+  display: inline-block;
+  margin: 2rem 0;
+}
+
+.search-form > div label span {
+  margin: 1rem auto;
+}
+
+.search-form > div label span.hint {
+  color: var(--color-gray-600);
+  font-style: italic;
+}
+
+@media (prefers-color-scheme: dark) {
+  .search-form > div label span.hint {
+    color: var(--color-gray-400);
+  }
+}
+
+.search-form > div label input {
+  padding: 0.5rem;
+  min-width: 40ch;
+  border-radius: 0.2rem;
+  border: 2px solid currentColor;
+  background: none;
+  font-size: 1rem;
+  font-family: var(--font-sans);
+  text-align: left;
+}
+
+.search-form > div label input:focus {
+  border-color: var(--color-purple-700) !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  .search-form > div label input:focus {
+    border-color: var(--color-purple-400) !important;
+  }
+}
+
+.search-form button[type="submit"] {
+  padding: 0.5rem;
+  border-radius: 0.2rem;
+  border: 2px solid currentColor;
+  background: none;
+  font-size: 1rem;
+  font-family: var(--font-sans);
+  cursor: pointer;
+}
+
+.search-form button[type="submit"]:hover,
+.search-form button[type="submit"]:focus {
+  color: var(--color-purple-700);
+}
+
+@media (prefers-color-scheme: dark) {
+  .search-form button[type="submit"]:hover,
+  .search-form button[type="submit"]:focus {
+    color: var(--color-purple-400);
+  }
+}

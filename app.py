@@ -354,6 +354,109 @@ def library_page(page: int | None):
     )
 
 
+@app.route("/kirjasto/haku/", defaults={"page": None}, methods=["GET", "POST"])
+@app.route("/kirjasto/haku/<int:page>/", methods=["GET", "POST"])
+def library_search(page: int | None):
+    isbn = ""
+    name = ""
+    author = ""
+    classification = ""
+    if request.args.get("isbn"):
+        isbn = str(request.args.get("isbn"))
+    if request.args.get("name"):
+        name = str(request.args.get("name"))
+    if request.args.get("author"):
+        author = str(request.args.get("author"))
+    if request.args.get("classification"):
+        classification = str(request.args.get("classification"))
+
+    # NOTE: We want to keep the state of the search in the URL, but with
+    # a new post, override the URL parameters.
+    if request.method == "POST":
+        if "isbn" in request.form:
+            isbn = request.form["isbn"]
+        if "name" in request.form:
+            name = request.form["name"]
+        if "author" in request.form:
+            author = request.form["author"]
+        if "classification" in request.form:
+            classification = request.form["classification"]
+
+    per_page = request.args.get("per_page")
+    book_count = library.search_result_count(
+        isbn=isbn, name=name, author=author, classification=classification
+    )
+    page_size = 10
+    if per_page:
+        page_size = int(per_page)
+
+    page_count = math.ceil(book_count / page_size)
+
+    add_per_page_param = False
+
+    params: str = ""
+    if per_page:
+        params = f"?per_page={per_page}"
+        add_per_page_param = True
+
+    if isbn:
+        params += f"&isbn={isbn}" if params else f"?isbn={isbn}"
+    if name:
+        params += f"&name={name}" if params else f"?name={name}"
+    if author:
+        params += f"&author={author}" if params else f"?author={author}"
+    if classification:
+        params += (
+            f"&classification={classification}"
+            if params
+            else f"?classification={classification}"
+        )
+
+    if (page and page <= 1) or "reset_page" in request.args:
+        # I want the default URL to be clean.
+        return redirect(f"/kirjasto/haku{params}")
+
+    # Set the correct page after checking for the redirection so that we
+    # don't get infinite loop.
+    if not page or page <= 1:
+        page = 1
+
+    if page > page_count:
+        return redirect(f"/kirjasto/haku/{page_count}{params}")
+
+    if request.method == "POST":
+        return redirect(f"/kirjasto/haku{params}")
+
+    books = library.search(
+        page=page,
+        page_size=page_size,
+        isbn=isbn,
+        name=name,
+        author=author,
+        classification=classification,
+    )
+
+    owned: Sequence[library.BookIDCounts] = []
+    if "user_id" in session:
+        owned = library.get_owned_book_counts_by_id(
+            cast(int, session["user_id"])
+        )
+
+    search_params = params[1:]
+
+    return render_template(
+        "library_search.html",
+        books=books,
+        page=page,
+        page_count=page_count,
+        page_size=page_size,
+        add_per_page_param=add_per_page_param,
+        owned=owned,
+        search_params=search_params,
+        **context,
+    )
+
+
 ########################################################################
 # BOOK MANAGEMENT
 ########################################################################

@@ -406,3 +406,134 @@ def search_classification(search: str) -> Sequence[LibraryClass]:
         )
 
     return classes
+
+
+def search(
+    page: int,
+    page_size: int,
+    isbn: str | None,
+    name: str | None,
+    author: str | None,
+    classification: str | None,
+):
+    print(name)
+    sql = """
+        SELECT
+            b.id,
+            b.isbn,
+            b.name,
+            IFNULL(a.first_name, '') || ' ' || a.surname AS author,
+            c.label AS classification,
+            COUNT(o.id) AS total
+        FROM books AS b
+        JOIN book_ownerships AS o ON b.id = o.book_id
+        JOIN authors AS a ON b.author_id = a.id
+        JOIN classification AS c ON b.class_id = c.id
+    """
+
+    if isbn or name or author or classification:
+        sql += "WHERE "
+
+    query: list[str] = []
+    params: list[str | int] = []
+    if isbn:
+        query.append("b.isbn LIKE ?")
+        params.append(f"%{isbn}%")
+
+    if name:
+        query.append("b.name LIKE ?")
+        params.append(f"%{name}%")
+
+    if author:
+        parts = author.split()
+        for p in parts:
+            query.append("(a.first_name LIKE ? OR a.surname LIKE ?)")
+            params.append(p)
+            params.append(p)
+
+    if classification:
+        parts = classification.split()
+        for p in parts:
+            query.append("(c.key LIKE ? OR c.label LIKE ?)")
+            params.append(p)
+            params.append(p)
+
+    sql += (
+        " AND ".join(query)
+        + """GROUP BY b.id
+        ORDER BY
+            c.key ASC,
+            a.surname ASC,
+            a.first_name ASC,
+            b.name ASC,
+            classification ASC,
+            total DESC
+        LIMIT ? OFFSET ?
+    """
+    )
+    limit = page_size
+    offset = page_size * (page - 1)
+    params.append(limit)
+    params.append(offset)
+    print("Searching with", sql)
+    result = db.query(sql, params)
+    books: list[CountBook] = []
+    for b in cast(Sequence[CountBooksResult], result):
+        books.append(
+            CountBook(
+                id=b["id"],
+                isbn=b["isbn"],
+                name=b["name"],
+                author=b["author"],
+                classification=b["classification"],
+                count=b["total"],
+            )
+        )
+
+    return books
+
+
+def search_result_count(
+    isbn: str | None,
+    name: str | None,
+    author: str | None,
+    classification: str | None,
+) -> int:
+    sql = """
+        SELECT COUNT(b.id)
+        FROM books AS b
+        JOIN authors AS a ON b.author_id = a.id
+        JOIN classification AS c ON b.class_id = c.id
+    """
+
+    if isbn or name or author or classification:
+        sql += "WHERE "
+
+    query: list[str] = []
+    params: list[str | int] = []
+    if isbn:
+        query.append("b.isbn LIKE ?")
+        params.append(f"%{isbn}%")
+
+    if name:
+        query.append("b.name LIKE ?")
+        params.append(f"%{name}%")
+
+    if author:
+        parts = author.split()
+        for p in parts:
+            query.append("(a.first_name LIKE ? OR a.surname LIKE ?)")
+            params.append(p)
+            params.append(p)
+
+    if classification:
+        parts = classification.split()
+        for p in parts:
+            query.append("(c.key LIKE ? OR c.label LIKE ?)")
+            params.append(p)
+            params.append(p)
+
+    sql += " AND ".join(query)
+    result = db.query(sql, params)
+
+    return result[0]["COUNT(b.id)"] if result else 0
