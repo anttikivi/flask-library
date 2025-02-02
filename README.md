@@ -9,29 +9,20 @@ While this project uses English for development, the user-facing web application
 will be implemented in Finnish and using the
 [Finnish Public Libraries Classification System](https://finto.fi/ykl/fi/).
 
-### Planned Features
+Here is the list of the currently implemented features. The list will grow as
+the project is developed further.
 
-As of right now, here is the list of the planned features. As the development
-progresses, I’ll mark the checkboxes as the features in question get
-implemented. The features that will be implemented might change during
-development.
+- The user can create an account and log in.
+- Each user has their personal library that contains the books that the user
+  owns.
+- The user can create new books, delete book ownerships and edit book
+  information.
+- The user can see the books in all of the libraries.
+- The user can search books by their name.
+- User can add any book already in the database to their library.
 
-- [x] The user can create an account and log in.
-- [ ] Only some information of the user libraries are shown without logging. As
-      the app stores information on personal belongings, it is sensible to
-      authenticate those who can browse the information in the database.
-- [ ] The user can create a “guest” account to browse other users’ libraries
-      more freely.
-- [ ] When logged in, the user can create, modify, and delete book entries in
-      the library. The entries can have all the information you would expect to
-      see, like the title, author, genre, ISBN, and freeform thoughts of the
-      user on the book.
-- [ ] When logged in, the user can provide an image of the books cover.
-- [ ] The user can search for books by title, genre, author, ISBN, and
-      (possibly) by other factors.
-- [ ] The user can view book stats of other users.
-- [ ] When logged in, the user can marks books as read.
-- [ ] When logged in, the user can comment on other people’s libraries.
+Planned features are tracked in
+[this project](https://github.com/users/anttikivi/projects/9).
 
 ## Getting Started
 
