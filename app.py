@@ -970,6 +970,112 @@ def edit_book(book_id: int):
     )
 
 
+@app.route("/kirja/<int:book_id>/muokkaa-luokitusta/", methods=["GET", "POST"])
+def edit_book_classification(book_id: int):
+    check_login()
+
+    book = library.get_book_by_id(book_id)
+    if not book:
+        abort(404)
+    book_author = author.get_author_by_id(book.author_id)
+    if not book_author:
+        abort(500)
+    book_class = library.get_classification_by_id(book.class_id)
+    if not book_class:
+        abort(500)
+
+    owns = (
+        library.is_owner(cast(int, session["user_id"]), book_id)
+        if "user_id" in session
+        else False
+    )
+
+    if not owns:
+        abort(403)
+
+    if request.method == "POST":
+        check_csrf()
+
+        if "what" not in request.form:
+            abort(400)
+        what = request.form["what"]
+        if what != "search" and what != "select":
+            abort(400)
+
+        if what == "search":
+            search = request.form["class-search"]
+            if not search:
+                flash("Anna luokituksen haku", "classification")
+                return render_template(
+                    "edit_book_classification.html",
+                    book=book,
+                    author=book_author,
+                    book_class=book_class,
+                    **context,
+                )
+            new_classes = library.search_classification(search)
+            form_data = {"last_class_search": search}
+            return render_template(
+                "edit_book_classification.html",
+                form_data=form_data,
+                book=book,
+                author=book_author,
+                book_class=book_class,
+                new_classes=new_classes,
+                **context,
+            )
+
+        if what == "select":
+            search = request.form["last-class-search"]
+            new_class = (
+                int(request.form["class"]) if "class" in request.form else 0
+            )
+            if not new_class:
+                flash("Valitse luokitus", "classification")
+                new_classes = library.search_classification(search)
+                form_data = {"last_class_search": search}
+                return render_template(
+                    "edit_book_classification.html",
+                    form_data=form_data,
+                    book=book,
+                    author=book_author,
+                    book_class=book_class,
+                    new_classes=new_classes,
+                    **context,
+                )
+
+            selected_class = library.get_classification_by_id(new_class)
+            if not selected_class:
+                abort(400)
+            library.update_book_class(book_id, selected_class.id)
+            book = library.get_book_by_id(book_id)
+            if not book:
+                abort(404)
+            book_author = author.get_author_by_id(book.author_id)
+            if not book_author:
+                abort(500)
+            book_class = library.get_classification_by_id(book.class_id)
+            if not book_class:
+                abort(500)
+
+            owns = (
+                library.is_owner(cast(int, session["user_id"]), book_id)
+                if "user_id" in session
+                else False
+            )
+
+            if not owns:
+                abort(500)
+
+    return render_template(
+        "edit_book_classification.html",
+        book=book,
+        author=book_author,
+        book_class=book_class,
+        **context,
+    )
+
+
 @app.route("/add-one-book/", methods=["GET"])
 def add_one_book():
     check_csrf_from_param()

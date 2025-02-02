@@ -1,0 +1,97 @@
+{% extends "layout.html" %}
+
+{% block title %}Korjaa kirjan luokitusta{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <h1 class="page-title">Korjaa kirjan luokitusta</h1>
+    <p class="book-info">Kirja: {{ book.name -}}.</p>
+    <p class="book-info">
+      Kirjoittaja:{{ " " }}{{- author.first_name + " " if author.first_name else "" -}}{{ author.surname -}}
+    </p>
+    <p class="book-info">
+      Luokitus:{{ " " }}{{- book_class.key -}}{{ " " }}{{- book_class.label -}}
+    </p>
+    <h2 class="title">Korjaa kirjan luokitus</h2>
+    {% with errors = get_flashed_messages(category_filter=["classification"]) %}
+      {% if errors %}
+        <h3 class="sr-only">Lomakkeessa olleet virheet</h3>
+        <ul class="flashes">
+          {% for msg in errors %}
+            <li class="error">{{ msg }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+      {% if new_classes %}
+        <div class="register-form-wrapper">
+          <form class="register-form" method="POST">
+            <fieldset class="author-select">
+              <legend>Valitse luokitus</legend>
+              <p>
+                Vinkki: lista saattaa olla pitkä. Voit selata sitä
+                vierittämällä.
+              </p>
+              <div class="class-select-scroll">
+                {% for lib_class in new_classes %}
+                  <div class="author-wrapper">
+                    <div class="label-wrapper">
+                      <label for="class-{{- lib_class.id -}}"
+                        >{{- lib_class.key -}}{{ " " }}{{- lib_class.label -}}
+                      </label>
+                    </div>
+                    <div class="input-wrapper">
+                      <input
+                        id="class-{{- lib_class.id -}}"
+                        name="class"
+                        type="radio"
+                        value="{{- lib_class.id -}}"
+                        required
+                      />
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            </fieldset>
+            {% include "csrf_token.html" %}
+            <input
+              id="last-class-search"
+              name="last-class-search"
+              value="{{- form_data.last_class_search -}}"
+              type="hidden"
+            />
+            <input type="hidden" name="what" value="select" />
+            <button type="submit">Valitse luokitus</button>
+          </form>
+        </div>
+      {% endif %}
+      <div class="register-form-wrapper">
+        <form class="register-form edit-form" method="POST">
+          <div>
+            <label
+              {{ ' class="label-error"' | safe if "haku" in errors | first | lower else "" }}
+              for="class-search"
+            >
+              <span>Luokittelun haku</span>
+              <span class="sublabel"
+                >Kirjaston luokittelu on laaja, ja tämä ohjelma ei voi hakea
+                tietoja reaaliajassa, koska se ei käytä JavaScriptiä. Hae siis
+                luokitusta tässä ja valitse kirjan luokitus seuraavalla
+                sivulla.</span
+              >
+              <input
+                id="class-search"
+                name="class-search"
+                type="text"
+                value="{{- form_data.last_class_search if 'last_class_search' in form_data else '' -}}"
+                required
+              />
+            </label>
+          </div>
+          <input type="hidden" name="what" value="search" />
+          {% include "csrf_token.html" %}
+          <button type="submit">Hae luokitusta</button>
+        </form>
+      </div>
+    {% endwith %}
+  </div>
+{% endblock %}

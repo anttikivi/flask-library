@@ -105,6 +105,11 @@ def update_book_author(book_id: int, new_author_id: int):
     db.execute(sql, [new_author_id, book_id])
 
 
+def update_book_class(book_id: int, new_class_id: int):
+    sql = "UPDATE books SET class_id = ? WHERE id = ?"
+    db.execute(sql, [new_class_id, book_id])
+
+
 def remove_books_from_user(book_id: int, user_id: int, count: int = 1):
     sql = """
         DELETE FROM book_ownerships
