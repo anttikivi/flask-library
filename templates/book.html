@@ -11,6 +11,9 @@
     <p class="book-info">
       Luokitus:{{ " " }}{{- book_class.key -}}{{ " " }}{{- book_class.label -}}
     </p>
+    {% if book.isbn %}
+      <p class="book-info">ISBN:{{- " " -}}{{ book.isbn -}}.</p>
+    {% endif %}
     <p class="book-info">
       Yhteensä kirjastoissa:{{ " " }}{{- count -}}{{ " " }}kpl
     </p>

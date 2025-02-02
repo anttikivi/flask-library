@@ -912,7 +912,12 @@ def edit_book(book_id: int):
         if "what" not in request.form:
             abort(400)
         what = request.form["what"]
-        if what != "name" and what != "author" and what != "author-update":
+        if (
+            what != "name"
+            and what != "isbn"
+            and what != "author"
+            and what != "author-update"
+        ):
             abort(400)
 
         if what == "name":
@@ -928,6 +933,29 @@ def edit_book(book_id: int):
                 )
 
             library.update_book_name(book_id, new_name)
+            book = library.get_book_by_id(book_id)
+            if not book:
+                abort(500)
+            book_author = author.get_author_by_id(book.author_id)
+            if not book_author:
+                abort(500)
+            book_class = library.get_classification_by_id(book.class_id)
+            if not book_class:
+                abort(500)
+
+        if what == "isbn":
+            new_isbn = request.form["isbn"]
+            if not new_isbn:
+                flash("Sinun tulee antaa ISBN-tunnus", "isbn")
+                return render_template(
+                    "edit_book.html",
+                    book=book,
+                    author=book_author,
+                    book_class=book_class,
+                    **context,
+                )
+
+            library.update_book_isbn(book_id, new_isbn)
             book = library.get_book_by_id(book_id)
             if not book:
                 abort(500)

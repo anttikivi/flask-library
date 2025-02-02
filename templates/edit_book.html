@@ -12,6 +12,9 @@
     <p class="book-info">
       Luokitus:{{ " " }}{{- book_class.key -}}{{ " " }}{{- book_class.label -}}
     </p>
+    {% if book.isbn %}
+      <p class="book-info">ISBN:{{- " " -}}{{ book.isbn -}}.</p>
+    {% endif %}
     <h2 class="title">Korjaa kirjan nimi</h2>
     <div class="register-form-wrapper">
       <form class="register-form edit-form" method="POST">
@@ -39,6 +42,35 @@
         {% endwith %}
       </form>
     </div>
+
+    <h2 class="title">Korjaa kirjan ISBN-tunnus</h2>
+    <div class="register-form-wrapper">
+      <form class="register-form edit-form" method="POST">
+        {% with errors = get_flashed_messages(category_filter=["isbn"]) %}
+          {% if errors %}
+            <h3 class="sr-only">Lomakkeessa olleet virheet</h3>
+            <ul class="flashes">
+              {% for msg in errors %}
+                <li class="error">{{ msg }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+          <div>
+            <label
+              {{ ' class="label-error"' | safe if "isbn" in errors | first | lower else "" }}
+              for="isbn"
+            >
+              <span>Uusi ISBN</span>
+              <input id="isbn" name="isbn" type="text" />
+            </label>
+          </div>
+          <input type="hidden" name="what" value="isbn" />
+          {% include "csrf_token.html" %}
+          <button type="submit">Vaihda ISBN-tunnus</button>
+        {% endwith %}
+      </form>
+    </div>
+
     <h2 class="title">Korjaa kirjoittaja</h2>
     {% if not author_results %}
       <div class="register-form-wrapper edit-form">

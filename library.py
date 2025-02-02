@@ -100,6 +100,11 @@ def update_book_name(book_id: int, new_name: str):
     db.execute(sql, [new_name, book_id])
 
 
+def update_book_isbn(book_id: int, new_isbn: str):
+    sql = "UPDATE books SET isbn = ? WHERE id = ?"
+    db.execute(sql, [new_isbn, book_id])
+
+
 def update_book_author(book_id: int, new_author_id: int):
     sql = "UPDATE books SET author_id = ? WHERE id = ?"
     db.execute(sql, [new_author_id, book_id])
