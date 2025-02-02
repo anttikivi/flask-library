@@ -752,12 +752,22 @@ def book_page(book_id: int):
         if "user_id" in session
         else False
     )
+    count = library.get_book_total_owned_count(book_id)
+    owned_count = (
+        library.get_book_user_owned_count(
+            book_id, cast(int, session["user_id"])
+        )
+        if "user_id" in session
+        else 0
+    )
     return render_template(
         "book.html",
         author=book_author,
         book=book,
         book_class=book_class,
         owns=owns,
+        count=count,
+        owned_count=owned_count,
         **context,
     )
 

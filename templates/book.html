@@ -11,6 +11,12 @@
     <p class="book-info">
       Luokitus:{{ " " }}{{- book_class.key -}}{{ " " }}{{- book_class.label -}}
     </p>
+    <p class="book-info">
+      Yhteensä kirjastoissa:{{ " " }}{{- count -}}{{ " " }}kpl
+    </p>
+    <p class="book-info">
+      Omassa kirjastossasi:{{ " " }}{{- owned_count -}}{{ " " }}kpl
+    </p>
     {% if session.user_id %}
       <div class="book-edit-buttons">
         {% if owns %}
@@ -23,6 +29,13 @@
           href="/add-one-book?id={{- book.id -}}&token={{- session.csrf_token -}}"
           >Lisää kappale kirjastoosi</a
         >
+        {% if owns %}
+          <a
+            class="button"
+            href="/delete-one-book?id={{- book.id -}}&token={{- session.csrf_token -}}"
+            >Poista kappale kirjastostasi</a
+          >
+        {% endif %}
       </div>
     {% else %}
       <p>

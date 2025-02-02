@@ -184,6 +184,23 @@ def get_book_by_id(id: int) -> Book | None:
     )
 
 
+def get_book_total_owned_count(book_id: int) -> int:
+    sql = "SELECT COUNT(id) AS total FROM book_ownerships WHERE book_id = ?"
+    result = db.query(sql, [book_id])
+    return result[0]["total"] if result else 0
+
+
+def get_book_user_owned_count(book_id: int, user_id: int) -> int:
+    sql = """
+        SELECT COUNT(o.id) AS total
+        FROM book_ownerships AS o
+        JOIN libraries AS l ON o.library_id = l.id
+        WHERE o.book_id = ? AND l.user_id = ?
+    """
+    result = db.query(sql, [book_id, user_id])
+    return result[0]["total"] if result else 0
+
+
 def get_popular_books(count: int) -> Sequence[CountBook]:
     sql = """
         SELECT
