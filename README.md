@@ -62,8 +62,8 @@ this by running:
 
     chmod +x ./scripts/gen_sql_init.py
 
-Running untrusted statements is a bad idea, so you can first redirect the output
-to a file for inspecting.
+Running untrusted input is a bad idea, so you can first redirect the output to a
+file for inspecting.
 
     ./scripts/gen_sql_init.py > init.sql
 
