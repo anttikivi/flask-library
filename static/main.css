@@ -272,9 +272,20 @@ a.button:focus {
 }
 
 .footer {
-  margin: 3rem auto;
+  margin: 4rem auto 3rem;
 }
 
+.footer > p {
+  margin: 2rem auto;
+  text-align: center;
+}
+
+.footer .heart {
+  display: inline-block;
+  vertical-align: text-top;
+  width: 1.2rem;
+  height: 1.2rem;
+}
 .page-title {
   text-align: center;
   font-size: 2.3rem;
