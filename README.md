@@ -13,6 +13,7 @@ Here is the list of the currently implemented features. The list will grow as
 the project is developed further.
 
 - The user can create an account and log in.
+- The user can edit their username and password.
 - Each user has their personal library that contains the books that the user
   owns.
 - The user can create new books, delete book ownerships and edit book
