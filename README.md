@@ -18,6 +18,8 @@ the project is developed further.
   owns.
 - The user can create new books, delete book ownerships and edit book
   information.
+  - The books can be classified using the
+    [Finnish Public Libraries Classification System](https://finto.fi/ykl/fi/).
 - The user can see the books in all of the libraries.
 - The user can search books by their name.
 - User can add any book already in the database to their library.
