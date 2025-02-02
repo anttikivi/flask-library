@@ -999,7 +999,6 @@ def edit_book(book_id: int):
             form_data = {
                 "author": {"first_name": first_name, "surname": surname}
             }
-            print("Rendering the search results ")
             return render_template(
                 "edit_book.html",
                 form_data=form_data,

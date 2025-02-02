@@ -402,8 +402,6 @@ def search_classification(search: str) -> Sequence[LibraryClass]:
 
     result = db.query(sql, params)
 
-    print(result)
-
     classes: list[LibraryClass] = []
     for c in cast(Sequence[LibraryClassResult], result):
         classes.append(
@@ -421,7 +419,6 @@ def search(
     author: str | None,
     classification: str | None,
 ):
-    print(name)
     sql = """
         SELECT
             b.id,
@@ -480,7 +477,6 @@ def search(
     offset = page_size * (page - 1)
     params.append(limit)
     params.append(offset)
-    print("Searching with", sql)
     result = db.query(sql, params)
     books: list[CountBook] = []
     for b in cast(Sequence[CountBooksResult], result):
