@@ -44,6 +44,24 @@
     </form>
   </div>
 
+  <div class="container">
+    <h2 class="page-title">Tulokset haulle</h2>
+    <div class="page-intro library-intro">
+      {% if form_data.isbn %}
+        <p>ISBN:{{- " " -}}{{- form_data.isbn -}}</p>
+      {% endif %}
+      {% if form_data.name %}
+        <p>Nimi:{{- " " -}}{{- form_data.name -}}</p>
+      {% endif %}
+      {% if form_data.author %}
+        <p>Kirjoittaja:{{- " " -}}{{- form_data.author -}}</p>
+      {% endif %}
+      {% if form_data.classification %}
+        <p>Luokitus:{{- " " -}}{{- form_data.classification -}}</p>
+      {% endif %}
+    </div>
+  </div>
+
   <div class="listing-container">
     <div
       class="book-listing library-listing{{ ' logged-in' if session.user_id else '' }}"

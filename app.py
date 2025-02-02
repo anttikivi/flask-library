@@ -444,6 +444,13 @@ def library_search(page: int | None):
 
     search_params = params[1:]
 
+    form_data = {
+        "isbn": isbn,
+        "name": name,
+        "author": author,
+        "classification": classification,
+    }
+
     return render_template(
         "library_search.html",
         books=books,
@@ -453,6 +460,7 @@ def library_search(page: int | None):
         add_per_page_param=add_per_page_param,
         owned=owned,
         search_params=search_params,
+        form_data=form_data,
         **context,
     )
 
