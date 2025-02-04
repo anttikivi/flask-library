@@ -294,6 +294,11 @@ def logout() -> Response:
     if "user_id" in session:
         del session["user_id"]
         del session["username"]
+    if not request.referrer:
+        # If there is no referrer (e.g. /logout/ was called by typing
+        # address to the browser, redirect to the home page to avoid a
+        # 404 error by address "/logout/None").
+        return redirect("/")
     # TODO: Is using the referrer here the best solution? At least for
     # now it helps catching any routes that user might be able to access
     # without logging in.
