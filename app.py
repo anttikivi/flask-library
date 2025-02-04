@@ -392,7 +392,7 @@ def library_search(page: int | None):
     if per_page:
         page_size = int(per_page)
 
-    page_count = math.ceil(book_count / page_size)
+    page_count = math.ceil(book_count / page_size) if book_count > 0 else 1
 
     add_per_page_param = False
 
