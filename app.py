@@ -15,7 +15,9 @@ from flask import (
 )
 from werkzeug.wrappers import Response
 
+import add_book
 import author
+import checks
 import db
 import env
 import library
@@ -27,26 +29,6 @@ app = Flask(__name__)
 app.secret_key = os.environ["SECRET_KEY"]
 
 context = {"site": {"subtitle": "Kirjat purkissa", "title": "Flask-kirjasto"}}
-
-
-def check_csrf():
-    if "csrf_token" not in request.form:
-        abort(403)
-    if request.form["csrf_token"] != session["csrf_token"]:
-        abort(403)
-
-
-def check_csrf_from_param():
-    token = request.args.get("token")
-    if not token:
-        abort(403)
-    if token != session["csrf_token"]:
-        abort(403)
-
-
-def check_login():
-    if "user_id" not in session:
-        abort(401)
 
 
 @app.route("/", methods=["GET"])
@@ -89,7 +71,7 @@ def edit_user():
         abort(500)
 
     if request.method == "POST":
-        check_csrf()
+        checks.check_csrf()
 
         if "what" not in request.form:
             abort(400)
@@ -478,379 +460,8 @@ def library_search(page: int | None):
 
 
 @app.route("/lisaa-kirja/", methods=["GET", "POST"])
-def add_book() -> str | Response:
-    # Regardless of method, unauthenticated users cannot access this
-    # page.
-    if "user_id" not in session:
-        abort(401)
-
-    if request.method == "POST":
-        check_csrf()
-        check_login()
-
-        if not request.form or "from-page" not in request.form:
-            abort(400)
-        from_page = int(request.form["from-page"])
-
-        # Handling the route is done as per the form page we are coming
-        # from.
-        if from_page == 0:
-            first_name = request.form["first-name-search"]
-            if (
-                "surname-search" not in request.form
-                or not request.form["surname-search"]
-            ):
-                flash("Anna sukunimi tai nimimerkki", "error")
-                form_data = {"page": from_page, "first_name": first_name}
-                return render_template(
-                    "add_book.html", form_data=form_data, **context
-                )
-            surname = request.form["surname-search"]
-            authors: Sequence[author.Author] = []
-            author_match = author.get_author(
-                request.form["first-name-search"],
-                request.form["surname-search"],
-            )
-            if author_match:
-                authors.append(author_match)
-
-            if not authors:
-                authors = author.seach_author(
-                    request.form["first-name-search"],
-                    request.form["surname-search"],
-                )
-            form_data = {
-                "page": from_page + 1,
-                "first_name": first_name,
-                "surname": surname,
-            }
-            return render_template(
-                "add_book.html",
-                authors=authors,
-                form_data=form_data,
-                **context,
-            )
-
-        if from_page == 1:
-            if "selected-form" not in request.form:
-                abort(400)
-
-            selected_form = request.form["selected-form"]
-            if selected_form == "select-author":
-                if "author" not in request.form or not request.form["author"]:
-                    flash(
-                        "Sinun tulee valita kirjoittaja tai luoda uusi",
-                        "error",
-                    )
-                    first_name = request.form["last-first-name"]
-                    surname = request.form["last-surname"]
-                    authors = []
-                    author_match = author.get_author(first_name, surname)
-                    if author_match:
-                        authors.append(author_match)
-
-                    if not authors:
-                        authors = author.seach_author(first_name, surname)
-                    form_data = {
-                        "page": from_page,
-                        "first_name": first_name,
-                        "surname": surname,
-                    }
-                    return render_template(
-                        "add_book.html",
-                        authors=authors,
-                        form_data=form_data,
-                        **context,
-                    )
-                author_id = int(request.form["author"])
-                selected = author.get_author_by_id(author_id)
-                form_data = {"page": from_page + 1}
-                return render_template(
-                    "add_book.html",
-                    author=selected,
-                    form_data=form_data,
-                    **context,
-                )
-            elif selected_form == "new-author":
-                first_name = request.form["first-name"]
-                if (
-                    "surname" not in request.form
-                    or not request.form["surname"]
-                ):
-                    flash("Anna sukunimi tai nimimerkki", "error")
-                    first_name = request.form["first-name"]
-                    surname = request.form["surname"]
-                    authors = []
-                    author_match = author.get_author(first_name, surname)
-                    if author_match:
-                        authors.append(author_match)
-
-                    if not authors:
-                        authors = author.seach_author(first_name, surname)
-                    form_data = {
-                        "page": from_page,
-                        "first_name": first_name,
-                        "surname": surname,
-                    }
-                    return render_template(
-                        "add_book.html",
-                        authors=authors,
-                        form_data=form_data,
-                        **context,
-                    )
-
-                surname = request.form["surname"]
-                author.create_author(first_name, surname)
-                created = author.get_author_by_id(db.last_insert_id())
-                form_data = {"page": from_page + 1}
-                return render_template(
-                    "add_book.html",
-                    author=created,
-                    form_data=form_data,
-                    **context,
-                )
-            else:
-                abort(400)
-
-        if from_page == 2:
-            form_author = author.get_author_from_form()
-            if (
-                "book-name-search" not in request.form
-                or not request.form["book-name-search"]
-            ):
-                flash("Anna kirjan nimi", "error")
-                form_data = {"page": from_page}
-                return render_template(
-                    "add_book.html",
-                    author=form_author,
-                    form_data=form_data,
-                    **context,
-                )
-
-            books = library.search_books_from_author(
-                form_author.id, request.form["book-name-search"]
-            )
-            form_data = {
-                "page": from_page + 1,
-                "book_name": request.form["book-name-search"],
-            }
-            return render_template(
-                "add_book.html",
-                author=form_author,
-                books=books,
-                form_data=form_data,
-                **context,
-            )
-
-        if from_page == 3:
-            if "selected-form" not in request.form:
-                abort(400)
-
-            selected_form = request.form["selected-form"]
-            if selected_form == "select-book":
-                form_author = author.get_author_from_form()
-
-                if "book" not in request.form or not request.form["book"]:
-                    flash("Sinun tulee valita kirja", "error")
-                    books = library.search_books_from_author(
-                        form_author.id, request.form["book-name-search"]
-                    )
-                    form_data = {
-                        "page": from_page,
-                        "book_name": request.form["book-name-search"],
-                    }
-                    return render_template(
-                        "add_book.html",
-                        author=form_author,
-                        books=books,
-                        form_data=form_data,
-                        **context,
-                    )
-
-                lib_id = library.get_user_library(
-                    cast(int, session["user_id"])
-                )
-                if not lib_id:
-                    abort(400)
-                book_id = int(request.form["book"])
-                selected = library.get_book_by_id(book_id)
-                if not selected:
-                    abort(400)
-                selected_author = author.get_author_by_id(form_author.id)
-                if not selected_author:
-                    abort(400)
-                library.add_book_to_user(
-                    selected.id, cast(int, session["user_id"])
-                )
-                return redirect("/kirja/" + str(book_id))
-            elif selected_form == "new-book":
-                form_author = author.get_author_from_form()
-                if (
-                    "book-name" not in request.form
-                    or not request.form["book-name"]
-                ):
-                    flash("Anna kirjan nimi", "error")
-                    books = library.search_books_from_author(
-                        form_author.id, request.form["book-name-search"]
-                    )
-                    form_data = {
-                        "page": from_page,
-                        "book_name": request.form["book-name-search"],
-                    }
-                    return render_template(
-                        "add_book.html",
-                        author=form_author,
-                        books=books,
-                        form_data=form_data,
-                        **context,
-                    )
-
-                if (
-                    "class-search" not in request.form
-                    or not request.form["class-search"]
-                ):
-                    flash("Anna hakusanat luokittelulle", "error")
-                    books = library.search_books_from_author(
-                        form_author.id, request.form["book-name-search"]
-                    )
-                    form_data = {
-                        "page": from_page,
-                        "book_name": request.form["book-name-search"],
-                    }
-                    return render_template(
-                        "add_book.html",
-                        author=form_author,
-                        books=books,
-                        form_data=form_data,
-                        **context,
-                    )
-                book_class = library.search_classification(
-                    request.form["class-search"]
-                )
-                form_data = {
-                    "page": from_page + 1,
-                    "isbn": request.form["isbn"],
-                    "book_name": request.form["book-name"],
-                    "class_search": request.form["class-search"],
-                    "last_class_search": request.form["class-search"],
-                }
-                return render_template(
-                    "add_book.html",
-                    author=form_author,
-                    library_classes=book_class,
-                    form_data=form_data,
-                    **context,
-                )
-            else:
-                abort(400)
-
-        if from_page == 4:
-            if "selected-form" not in request.form:
-                abort(400)
-
-            selected_form = request.form["selected-form"]
-            if selected_form == "select":
-                form_author = author.get_author_from_form()
-                if "class" not in request.form or not request.form["class"]:
-                    flash("Sinun tulee valita luokitus", "error")
-                    book_class = library.search_classification(
-                        request.form["last-class-search"]
-                    )
-                    form_data = {
-                        "page": from_page,
-                        "isbn": request.form["isbn"],
-                        "book_name": request.form["book-name"],
-                        "last_class_search": request.form["last-class-search"],
-                    }
-                    return render_template(
-                        "add_book.html",
-                        author=form_author,
-                        library_classes=book_class,
-                        form_data=form_data,
-                        **context,
-                    )
-                selected_author = author.get_author_by_id(form_author.id)
-                if not selected_author:
-                    abort(400)
-                book_class = library.get_classification_by_id(
-                    int(request.form["class"])
-                )
-                # If the class for the book is not found, the user has
-                # probably changed the form, thus the request is bad.
-                if not book_class:
-                    abort(400)
-                library.create_book(
-                    isbn=request.form["isbn"],
-                    name=request.form["book-name"],
-                    author_id=selected_author.id,
-                    class_id=book_class.id,
-                )
-                book_id = db.last_insert_id()
-                if not book_id:
-                    abort(400)
-                lib_id = library.get_user_library(
-                    cast(int, session["user_id"])
-                )
-                if not lib_id:
-                    abort(400)
-                library.add_book_to_user(
-                    book_id, cast(int, session["user_id"])
-                )
-                return redirect("/kirja/" + str(book_id))
-            elif selected_form == "search":
-                form_author = author.get_author_from_form()
-                if (
-                    "class-search" not in request.form
-                    or not request.form["class-search"]
-                ):
-                    flash("Sinun tulee antaa hakusana", "error")
-                    book_class = library.search_classification(
-                        request.form["last-class-search"]
-                    )
-                    form_data = {
-                        "page": from_page,
-                        "isbn": request.form["isbn"],
-                        "book_name": request.form["book-name"],
-                        "class_search": request.form["last-class-search"],
-                        "last_class_search": request.form["last-class-search"],
-                    }
-                    return render_template(
-                        "add_book.html",
-                        author=form_author,
-                        library_classes=book_class,
-                        form_data=form_data,
-                        **context,
-                    )
-                book_class = library.search_classification(
-                    request.form["class-search"]
-                )
-                form_data = {
-                    "page": from_page,
-                    "isbn": request.form["isbn"],
-                    "book_name": request.form["book-name"],
-                    "class_search": request.form["class-search"],
-                    "last_class_search": request.form["class-search"],
-                }
-                return render_template(
-                    "add_book.html",
-                    author=form_author,
-                    library_classes=book_class,
-                    form_data=form_data,
-                    **context,
-                )
-            else:
-                abort(400)
-
-    # Manually init the form data for the initial GET. The rest of the
-    # requests during the book adding process are done through POSTs, so
-    # doing a GET resets the form (as it should). If the form data were
-    # not cleared when loading the page with GET again, the form might
-    # become quite broken.
-    form_data = {"page": 0}
-
-    # If the method is not "POST", I can assume it's "GET" (might also
-    # be "HEAD" or "OPTIONS", but Flask takes care of those for us).
-    return render_template("add_book.html", form_data=form_data, **context)
+def add_book_page() -> str | Response:
+    return add_book.render_page(**context)
 
 
 @app.route("/kirja/<int:book_id>", methods=["GET"])
@@ -892,7 +503,7 @@ def book_page(book_id: int):
 
 @app.route("/kirja/<int:book_id>/muokkaa/", methods=["GET", "POST"])
 def edit_book(book_id: int):
-    check_login()
+    checks.check_login()
 
     book = library.get_book_by_id(book_id)
     if not book:
@@ -914,7 +525,7 @@ def edit_book(book_id: int):
         abort(403)
 
     if request.method == "POST":
-        check_csrf()
+        checks.check_csrf()
 
         if "what" not in request.form:
             abort(400)
@@ -1117,7 +728,7 @@ def edit_book(book_id: int):
 
 @app.route("/kirja/<int:book_id>/muokkaa-luokitusta/", methods=["GET", "POST"])
 def edit_book_classification(book_id: int):
-    check_login()
+    checks.check_login()
 
     book = library.get_book_by_id(book_id)
     if not book:
@@ -1139,7 +750,7 @@ def edit_book_classification(book_id: int):
         abort(403)
 
     if request.method == "POST":
-        check_csrf()
+        checks.check_csrf()
 
         if "what" not in request.form:
             abort(400)
@@ -1223,8 +834,8 @@ def edit_book_classification(book_id: int):
 
 @app.route("/add-one-book/", methods=["GET"])
 def add_one_book():
-    check_csrf_from_param()
-    check_login()
+    checks.check_csrf_from_param()
+    checks.check_login()
 
     book_id = request.args.get("id")
     user_id = cast(int, session["user_id"])
@@ -1238,8 +849,8 @@ def add_one_book():
 
 @app.route("/delete-one-book/", methods=["GET"])
 def delete_one_book():
-    check_csrf_from_param()
-    check_login()
+    checks.check_csrf_from_param()
+    checks.check_login()
 
     book_id = request.args.get("id")
     user_id = cast(int, session["user_id"])
