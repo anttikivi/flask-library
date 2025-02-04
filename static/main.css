@@ -178,6 +178,15 @@ input {
   }
 }
 
+.block {
+  display: block;
+}
+
+.x-margins {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
 a.button {
   padding: 0.5rem;
   border-radius: 0.2rem;
@@ -378,12 +387,15 @@ main .title:first-of-type {
   margin: 1rem auto;
 }
 
+.register-form > div span.hint,
 .register-form > div label span.hint {
+  text-align: center;
   color: var(--color-gray-600);
   font-style: italic;
 }
 
 @media (prefers-color-scheme: dark) {
+  .register-form > div span.hint,
   .register-form > div label span.hint {
     color: var(--color-gray-400);
   }
