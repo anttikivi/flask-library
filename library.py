@@ -200,6 +200,28 @@ def get_book_total_owned_count(book_id: int) -> int:
     return result[0]["total"] if result else 0
 
 
+def get_user_book_count(user_id: int) -> int:
+    sql = """
+        SELECT COUNT(DISTINCT o.book_id) AS total
+        FROM book_ownerships AS o
+        INNER JOIN libraries AS l ON o.library_id = l.id
+        WHERE l.user_id = ?
+    """
+    result = db.query(sql, [user_id])
+    return result[0]["total"] if result else 0
+
+
+def get_user_grand_total_books(user_id: int) -> int:
+    sql = """
+        SELECT COUNT(o.id) AS total
+        FROM book_ownerships AS o
+        JOIN libraries AS l ON o.library_id = l.id
+        WHERE l.user_id = ?
+    """
+    result = db.query(sql, [user_id])
+    return result[0]["total"] if result else 0
+
+
 def get_book_user_owned_count(book_id: int, user_id: int) -> int:
     sql = """
         SELECT COUNT(o.id) AS total
@@ -264,10 +286,73 @@ def get_owned_books(user_id: int) -> Sequence[CountBook]:
         JOIN authors AS a ON b.author_id = a.id
         JOIN classification AS c ON b.class_id = c.id
         WHERE l.user_id = ?
+        ORDER BY
+            c.key ASC,
+            a.surname ASC,
+            a.first_name ASC,
+            b.name ASC,
+            c.key ASC,
+            c.label ASC,
+            total DESC
     """
 
     result = db.query(sql, [user_id])
 
+    books: list[CountBook] = []
+    for b in cast(Sequence[CountBooksResult], result):
+        books.append(
+            CountBook(
+                id=b["id"],
+                isbn=b["isbn"],
+                name=b["name"],
+                author=b["author"],
+                classification=b["classification"],
+                count=b["total"],
+            )
+        )
+
+    return books
+
+
+def get_owned_books_paginated(
+    user_id: int, page: int, page_size: int
+) -> Sequence[CountBook]:
+    """
+    Returns the books owned by the given user.
+    """
+    sql = """
+        SELECT
+            b.id,
+            b.isbn,
+            b.name,
+            IFNULL(a.first_name, '') || ' ' || a.surname AS author,
+            c.label AS classification,
+            COUNT(o.id) AS total
+        FROM books AS b
+        JOIN book_ownerships AS o ON b.id = o.book_id
+        JOIN libraries AS l ON o.library_id = l.id
+        JOIN authors AS a ON b.author_id = a.id
+        JOIN classification AS c ON b.class_id = c.id
+        WHERE l.user_id = ?
+        GROUP BY
+            b.id,
+            b.isbn,
+            b.name,
+            author,
+            classification
+        ORDER BY
+            c.key ASC,
+            a.surname ASC,
+            a.first_name ASC,
+            b.name ASC,
+            c.key ASC,
+            c.label ASC,
+            total DESC
+        LIMIT ? OFFSET ?
+    """
+    limit = page_size
+    offset = page_size * (page - 1)
+    result = db.query(sql, [user_id, limit, offset])
     books: list[CountBook] = []
     for b in cast(Sequence[CountBooksResult], result):
         books.append(

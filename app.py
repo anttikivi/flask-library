@@ -49,12 +49,61 @@ def index() -> str:
 ########################################################################
 
 
-@app.route("/kayttaja/<string:username>/", methods=["GET"])
-def user_page(username: str):
+@app.route(
+    "/kayttaja/<string:username>/", defaults={"page": None}, methods=["GET"]
+)
+@app.route("/kayttaja/<string:username>/<int:page>/", methods=["GET"])
+def user_page(username: str, page: int | None):
     user = users.get_users_by_name(username)
     if not user:
         abort(404)
-    return render_template("user.html", user=user, **context)
+
+    per_page = request.args.get("per_page")
+    book_count = library.get_user_book_count(user.id)
+    print("Book count", book_count)
+    page_size = 10
+    if per_page:
+        page_size = int(per_page)
+
+    page_count = math.ceil(book_count / page_size) if book_count > 0 else 1
+
+    add_per_page_param = False
+
+    params: str = ""
+    if per_page:
+        params = f"?per_page={per_page}"
+        add_per_page_param = True
+
+    if (page and page <= 1) or "reset_page" in request.args:
+        # I want the default URL to be clean.
+        return redirect(f"/kayttaja/{username}/{params}")
+
+    # Set the correct page after checking for the redirection so that we
+    # don't get infinite loop.
+    if not page or page <= 1:
+        page = 1
+
+    if page > page_count:
+        return redirect(f"/kayttaja/{username}/{page_count}{params}")
+
+    books = library.get_owned_books_paginated(user.id, page, page_size)
+    owned: Sequence[library.BookIDCounts] = []
+    owned = library.get_owned_book_counts_by_id(user.id)
+
+    grand_total = library.get_user_grand_total_books(user.id)
+
+    return render_template(
+        "user.html",
+        user=user,
+        grand_total=grand_total,
+        books=books,
+        page=page,
+        page_count=page_count,
+        page_size=page_size,
+        add_per_page_param=add_per_page_param,
+        owned=owned,
+        **context,
+    )
 
 
 @app.route("/asetukset/", methods=["GET", "POST"])
