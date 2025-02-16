@@ -560,6 +560,7 @@ def book_page(book_id: int):
         if "user_id" in session
         else False
     )
+    reviews = library.get_reviews(book_id)
     return render_template(
         "book.html",
         author=book_author,
@@ -569,6 +570,7 @@ def book_page(book_id: int):
         count=count,
         owned_count=owned_count,
         has_read=is_read,
+        reviews=reviews,
         **context,
     )
 

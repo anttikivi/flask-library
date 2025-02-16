@@ -1,8 +1,12 @@
 from collections.abc import Sequence
 from dataclasses import dataclass
+from datetime import datetime
 from typing import TypedDict, cast
 
+from flask import abort
+
 import db
+import users
 
 
 @dataclass
@@ -46,6 +50,16 @@ class BookIDCounts:
     count: int
 
 
+@dataclass
+class Review:
+    id: int
+    user: users.User
+    book_id: int
+    stars: int
+    msg: str | None
+    timestamp: datetime
+
+
 BooksResult = TypedDict(
     "BooksResult",
     {
@@ -76,6 +90,19 @@ LibraryClassResult = TypedDict(
     "LibraryClassResult", {"id": int, "key": str, "label": str}
 )
 
+ReviewResult = TypedDict(
+    "ReviewResult",
+    {
+        "id": int,
+        "user_id": int,
+        "username": str,
+        "book_id": int,
+        "stars": int,
+        "message": str | None,
+        "time": str,
+    },
+)
+
 
 def create_library(user_id: int):
     sql = "INSERT INTO libraries (user_id) VALUES (?)"
@@ -88,6 +115,16 @@ def create_book(isbn: str | None, name: str, author_id: int, class_id: int):
         VALUES (?, ?, ?, ?)
     """
     db.execute(sql, [isbn, name, author_id, class_id])
+
+
+def add_review(
+    user_id: int, book_id: int, stars: int, message: str | None = None
+):
+    sql = """
+        INSERT INTO reviews (user_id, book_id, stars, message, time)
+        VALUES (?, ?, ?, ?, datetime('now'))
+    """
+    db.execute(sql, [user_id, book_id, stars, message])
 
 
 def mark_as_read(user_id: int, book_id: int):
@@ -701,3 +738,46 @@ def search_result_count(
     result = db.query(sql, params)
 
     return result[0]["COUNT(b.id)"] if result else 0
+
+
+def get_reviews(book_id: int) -> Sequence[Review]:
+    """
+    Returns the reviews for a book.
+    """
+    sql = """
+        SELECT
+            r.id,
+            r.user_id,
+            u.username AS username,
+            r.book_id,
+            r.stars,
+            r.message,
+            r.time
+        FROM reviews AS r
+        JOIN users AS u ON u.id = r.user_id
+        JOIN books AS b ON b.id = r.book_id
+        WHERE r.book_id = ?
+        ORDER BY r.time
+    """
+    result = db.query(sql, [book_id])
+
+    reviews: list[Review] = []
+    for r in cast(Sequence[ReviewResult], result):
+        try:
+            reviews.append(
+                Review(
+                    id=r["id"],
+                    user=users.User(id=r["user_id"], username=r["username"]),
+                    book_id=r["book_id"],
+                    stars=r["stars"],
+                    msg=r["message"],
+                    timestamp=datetime.strptime(
+                        r["time"], "%Y-%m-%d %H:%M:%S"
+                    ),
+                )
+            )
+        except ValueError:
+            print("Invalid time format found in the database")
+            abort(500)
+
+    return reviews
