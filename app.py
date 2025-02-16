@@ -118,6 +118,66 @@ def user_page(username: str, page: int | None):
     )
 
 
+@app.route(
+    "/kayttaja/<string:username>/luetut/",
+    defaults={"page": None},
+    methods=["GET"],
+)
+@app.route("/kayttaja/<string:username>/luetut/<int:page>/", methods=["GET"])
+def user_read_page(username: str, page: int | None):
+    user = users.get_users_by_name(username)
+    if not user:
+        abort(404)
+
+    per_page = request.args.get("per_page")
+    book_count = library.get_user_read_book_count(user.id)
+    page_size = 10
+    if per_page:
+        page_size = int(per_page)
+
+    page_count = math.ceil(book_count / page_size) if book_count > 0 else 1
+
+    add_per_page_param = False
+
+    params: str = ""
+    if per_page:
+        params = f"?per_page={per_page}"
+        add_per_page_param = True
+
+    if (page and page <= 1) or "reset_page" in request.args:
+        # I want the default URL to be clean.
+        return redirect(f"/kayttaja/{username}/luetut/{params}")
+
+    # Set the correct page after checking for the redirection so that we
+    # don't get infinite loop.
+    if not page or page <= 1:
+        page = 1
+
+    if page > page_count:
+        return redirect(f"/kayttaja/{username}/luetut/{page_count}{params}")
+
+    books = library.get_read_books_paginated(user.id, page, page_size)
+    owned: Sequence[library.BookIDCounts] = []
+    owned = library.get_owned_book_counts_by_id(user.id)
+    read_books: Sequence[library.JointBook] = []
+    if "user_id" in session:
+        read_books = library.get_read_books(cast(int, session["user_id"]))
+
+    return render_template(
+        "user_read.html",
+        user=user,
+        grand_total=book_count,
+        books=books,
+        page=page,
+        page_count=page_count,
+        page_size=page_size,
+        add_per_page_param=add_per_page_param,
+        owned=owned,
+        read_books=read_books,
+        **context,
+    )
+
+
 @app.route("/asetukset/", methods=["GET", "POST"])
 def edit_user():
     if "username" not in session:

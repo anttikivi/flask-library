@@ -1,37 +1,28 @@
 {% extends "layout.html" %}
 
-{% block title %}Käyttäjä {{ user.username }}{% endblock %}
+{% block title %}Käyttäjän {{ user.username }} lukemat kirjat{% endblock %}
 
 {% block content %}
   <div class="container">
-    <h1 class="page-title">Käyttäjä: {{ user.username -}}</h1>
+    <h1 class="page-title">Käyttäjän {{ user.username }} lukemat kirjat</h1>
     <div class="page-intro">
       {% if user.username == session.username %}
         <p>
-          Tervetuloa, {{ user.username }}. Sinulla on yhteensä {{ grand_total }}
-          {{ "kirja" if grand_total == 1 else "kirjaa" }}.
-        </p>
-        <p>
-          <a href="/kayttaja/{{- user.username -}}/luetut/">Lukemasi kirjat</a>
+          Tällä sivulla näet kaikki lukemasi kirjat. Olet lukenut yhteensä
+          {{ grand_total }}
+          {{ "kirjan" if grand_total == 1 else "kirjaa" }}.
         </p>
       {% else %}
         <p>
-          Tervetuloa käyttäjän {{ user.username }} sivulle. Käyttäjällä on
-          yhteensä {{ grand_total }}
-          {{ "kirja" if grand_total == 1 else "kirjaa" }}.
-        </p>
-        <p>
-          <a href="/kayttaja/{{- user.username -}}/luetut/"
-            >Käyttäjän lukemat kirjat</a
-          >
+          Tällä sivulla näet kaikki käyttäjän {{ user.username }} lukemat
+          kirjat. Hän on lukenut yhteensä {{ grand_total }}
+          {{ "kirjan" if grand_total == 1 else "kirjaa" }}.
         </p>
       {% endif %}
+      <p>
+        <a href="/kayttaja/{{- user.username -}}">Käyttäjäsivulle</a>
+      </p>
     </div>
-    {% if user.username == session.username %}
-      <div class="user-nav">
-        <a href="/asetukset/">Vaihda käyttäjätunnus tai salasana</a>
-      </div>
-    {% endif %}
   </div>
 
   <div class="listing-container">
@@ -107,41 +98,41 @@
         Näytä per sivu:
         <a
           class="{{- 'current' if page_size == 5 -}}"
-          href="/kayttaja/{{- user.username -}}/{{- page -}}?per_page=5&reset_page"
+          href="/kayttaja/{{- user.username -}}/luetut/{{- page -}}?per_page=5&reset_page"
           >5</a
         >
         <a
           class="{{- 'current' if page_size == 10 -}}"
-          href="/kayttaja/{{- user.username -}}/{{- page -}}?per_page=10&reset_page"
+          href="/kayttaja/{{- user.username -}}/luetut/{{- page -}}?per_page=10&reset_page"
           >10</a
         >
         <a
           class="{{- 'current' if page_size == 20 -}}"
-          href="/kayttaja/{{- user.username -}}/{{- page -}}?per_page=20&reset_page"
+          href="/kayttaja/{{- user.username -}}/luetut/{{- page -}}?per_page=20&reset_page"
           >20</a
         >
         <a
           class="{{- 'current' if page_size == 50 -}}"
-          href="/kayttaja/{{- user.username -}}/{{- page -}}?per_page=50&reset_page"
+          href="/kayttaja/{{- user.username -}}/luetut/{{- page -}}?per_page=50&reset_page"
           >50</a
         >
         <a
           class="{{- 'current' if page_size == 100 -}}"
-          href="/kayttaja/{{- user.username -}}/{{- page -}}?per_page=100&reset_page"
+          href="/kayttaja/{{- user.username -}}/luetut/{{- page -}}?per_page=100&reset_page"
           >100</a
         >
       </div>
       <div>
         {% if page > 1 %}
           <a
-            href="/kayttaja/{{- user.username -}}/{{- page - 1 -}}{{- '?per_page=' + (page_size | string) if add_per_page_param -}}"
+            href="/kayttaja/{{- user.username -}}/luetut/{{- page - 1 -}}{{- '?per_page=' + (page_size | string) if add_per_page_param -}}"
             >&lt;&lt;</a
           >
         {% endif %}
         Sivu {{ page -}}/{{- page_count }}
         {% if page < page_count %}
           <a
-            href="/kayttaja/{{- user.username -}}/{{- page + 1 -}}{{- '?per_page=' + (page_size | string) if add_per_page_param -}}"
+            href="/kayttaja/{{- user.username -}}/luetut/{{- page + 1 -}}{{- '?per_page=' + (page_size | string) if add_per_page_param -}}"
             >&gt;&gt;</a
           >
         {% endif %}

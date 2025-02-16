@@ -296,6 +296,16 @@ def get_user_book_count(user_id: int) -> int:
     return result[0]["total"] if result else 0
 
 
+def get_user_read_book_count(user_id: int) -> int:
+    sql = """
+        SELECT COUNT(DISTINCT r.book_id) AS total
+        FROM read_books AS r
+        WHERE r.user_id = ?
+    """
+    result = db.query(sql, [user_id])
+    return result[0]["total"] if result else 0
+
+
 def get_user_grand_total_books(user_id: int) -> int:
     sql = """
         SELECT COUNT(o.id) AS total
@@ -435,6 +445,61 @@ def get_read_books(user_id: int) -> Sequence[JointBook]:
                 name=b["name"],
                 author=b["author"],
                 classification=b["classification"],
+            )
+        )
+
+    return books
+
+
+def get_read_books_paginated(
+    user_id: int, page: int, page_size: int
+) -> Sequence[CountBook]:
+    """
+    Returns the books read by the given user.
+    """
+    sql = """
+        SELECT
+            b.id,
+            b.isbn,
+            b.name,
+            IFNULL(a.first_name, '') || ' ' || a.surname AS author,
+            c.label AS classification,
+            COUNT(o.id) AS total
+        FROM books AS b
+        JOIN read_books AS r ON b.id = r.book_id
+        JOIN authors AS a ON b.author_id = a.id
+        JOIN classification AS c ON b.class_id = c.id
+        JOIN book_ownerships AS o ON b.id = o.book_id
+        WHERE r.user_id = ?
+        GROUP BY
+            b.id,
+            b.isbn,
+            b.name,
+            author,
+            classification
+        ORDER BY
+            c.key ASC,
+            a.surname ASC,
+            a.first_name ASC,
+            b.name ASC,
+            c.key ASC,
+            c.label ASC,
+            total DESC
+        LIMIT ? OFFSET ?
+    """
+    limit = page_size
+    offset = page_size * (page - 1)
+    result = db.query(sql, [user_id, limit, offset])
+    books: list[CountBook] = []
+    for b in cast(Sequence[CountBooksResult], result):
+        books.append(
+            CountBook(
+                id=b["id"],
+                isbn=b["isbn"],
+                name=b["name"],
+                author=b["author"],
+                classification=b["classification"],
+                count=b["total"],
             )
         )
 
