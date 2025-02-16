@@ -7,6 +7,7 @@ MIGRATIONS_DIR="migrations"
 
 if [ ! -f "${DB_FILE}" ]; then
   sqlite3 "${DB_FILE}" <schema.sql
+  ./scripts/gen_sql_init.py | sqlite3 database.db
 fi
 
 execute_sql() {
