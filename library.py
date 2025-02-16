@@ -150,6 +150,11 @@ def update_review(
     db.execute(sql, [stars, message, user_id, book_id])
 
 
+def remove_review(user_id: int, book_id: int):
+    sql = "DELETE FROM reviews WHERE user_id = ? AND book_id = ?"
+    db.execute(sql, [user_id, book_id])
+
+
 def mark_as_read(user_id: int, book_id: int):
     """
     Marks the book read by the given user.

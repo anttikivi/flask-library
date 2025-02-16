@@ -102,6 +102,10 @@
           <a href="/kirja/{{- book.id -}}/muokkaa-arvostelua"
             >Muokkaa arvosteluasi</a
           >
+          <a
+            href="/remove-review?id={{- book.id -}}&token={{- session.csrf_token -}}"
+            >Poista arvostelusi</a
+          >
         {% endif %}
       </div>
       <hr />
@@ -165,6 +169,11 @@
         <div class="book-edit-buttons">
           <a class="button" href="/kirja/{{- book.id -}}/muokkaa-arvostelua"
             >Muokkaa arvosteluasi</a
+          >
+          <a
+            class="button"
+            href="/remove-review?id={{- book.id -}}&token={{- session.csrf_token -}}"
+            >Poista arvostelusi</a
           >
         </div>
       {% else %}

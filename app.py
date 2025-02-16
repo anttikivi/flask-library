@@ -1046,6 +1046,24 @@ def update_review():
     return redirect(f"/kirja/{book_id}")
 
 
+@app.route("/remove-review/", methods=["GET"])
+def remove_review():
+    checks.check_csrf_from_param()
+    checks.check_login()
+
+    book_id = request.args.get("id")
+    user_id = cast(int, session["user_id"])
+    if not book_id or not user_id:
+        abort(400)
+
+    if not library.get_user_review(int(book_id), user_id):
+        abort(400)
+
+    library.remove_review(user_id, int(book_id))
+
+    return redirect(request.referrer)
+
+
 @app.errorhandler(401)
 def handle_unauthorized(_: object):
     return render_template("401.html", **context), 401
