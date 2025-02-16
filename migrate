@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+set -e
+
+DB_FILE="database.db"
+MIGRATIONS_DIR="migrations"
+
+if [ ! -f "${DB_FILE}" ]; then
+  sqlite3 "${DB_FILE}" <schema.sql
+fi
+
+execute_sql() {
+  sql_file="$1"
+  echo "Running migration: ${sql_file}"
+  if ! sqlite3 "${DB_FILE}" <"${sql_file}"; then
+    echo "Error running migration: ${sql_file}"
+    exit 1
+  fi
+}
+
+find "${MIGRATIONS_DIR}" -name "*.sql" -print0 | sort -z -n | while IFS= read -r -d $'\0' file; do
+  execute_sql "${file}"
+done
