@@ -33,6 +33,8 @@ This project uses Python and
 [Flask](https://flask.palletsprojects.com/en/stable/) as the main framework.
 Please make sure you have at least Python 3.9 installed.
 
+### Create environment
+
 Start by creating a new Python virtual environment.
 
     python -m venv venv && source ./venv/bin/activate
@@ -44,8 +46,28 @@ Install dependencies.
 > The app depends only on Flask. If you want to, running `pip install flask`
 > should also do the job.
 
+### Initialize the database
+
 Before starting the server, you need to initalize the database. First create the
 database tables.
+
+To initialize the database, the easiest way is to use the migration script that
+initialize the database first if it is not already present. To do this, make
+sure that the script is executable.
+
+    chmod +x ./migrate
+
+Then run the script.
+
+    ./migrate
+
+<!-- prettier-ignore -->
+> [!IMPORTANT]
+> If you have created the database earlier, you need to also run the migration
+> script in order to bring the database up to date.
+
+Your other option is to create database manually and run the migrations one by
+one.
 
     sqlite3 database.db < schema.sql
 
@@ -69,6 +91,14 @@ file for inspecting.
 
 Running the statements takes a while. It runs 26,625 statements in total.
 
+To run the migrations, take a look at the [`migrations`](/migrations) directory.
+The migrations are numbered in the order you should run them. For example, you
+might run:
+
+    sqlite3 database.db < migrations/001_create_read_table.sql
+
+### Create the secret key
+
 The last thing the do before running the server is generating the secret key for
 Flask. The server reads the secret key reads variables into environment
 variables (`os.environ`) from `.env`, and then reads the secret key from
@@ -85,6 +115,8 @@ provided script.
 Once again, make sure the script has sufficient permissions.
 
     chmod +x ./scripts/gen_secret_key.py
+
+### Run the server
 
 Now you can start the local server.
 
