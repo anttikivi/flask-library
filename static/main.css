@@ -862,6 +862,10 @@ main .title:first-of-type {
   text-align: center;
 }
 
+.book-page .review time {
+  font-style: italic;
+}
+
 .book-page .review .stars {
   display: flex;
   justify-content: center;
