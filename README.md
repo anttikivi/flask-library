@@ -66,6 +66,11 @@ Then run the script.
 > If you have created the database earlier, you need to also run the migration
 > script in order to bring the database up to date.
 
+<!-- prettier-ignore -->
+> [!NOTE]
+> The migration script uses Bash. If you, for some reason, don't have it, run
+> the migrations manually.
+
 Your other option is to create database manually and run the migrations one by
 one.
 
