@@ -20,6 +20,14 @@
     <p class="book-info">
       Omassa kirjastossasi:{{ " " }}{{- owned_count -}}{{ " " }}kpl
     </p>
+    <p class="book-info">
+      {% if has_read %}
+        Olet lukenut tämän kirjan.
+      {% else %}
+        Et ole vielä lukenut tätä kirjaa.
+      {% endif %}
+    </p>
+
     {% if session.user_id %}
       <div class="book-edit-buttons">
         {% if owns %}
@@ -39,6 +47,13 @@
             class="button"
             href="/delete-one-book?id={{- book.id -}}&token={{- session.csrf_token -}}"
             >Poista kappale kirjastostasi</a
+          >
+        {% endif %}
+        {% if not has_read %}
+          <a
+            class="button"
+            href="/mark-as-read?id={{- book.id -}}&token={{- session.csrf_token -}}"
+            >Merkitse luetuksi</a
           >
         {% endif %}
       </div>

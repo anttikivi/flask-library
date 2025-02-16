@@ -538,6 +538,11 @@ def book_page(book_id: int):
         if "user_id" in session
         else 0
     )
+    is_read = (
+        library.is_read(cast(int, session["user_id"]), book_id)
+        if "user_id" in session
+        else False
+    )
     return render_template(
         "book.html",
         author=book_author,
@@ -546,6 +551,7 @@ def book_page(book_id: int):
         owns=owns,
         count=count,
         owned_count=owned_count,
+        has_read=is_read,
         **context,
     )
 
@@ -907,6 +913,21 @@ def delete_one_book():
         abort(400)
 
     library.remove_books_from_user(int(book_id), user_id, 1)
+
+    return redirect(request.referrer)
+
+
+@app.route("/mark-as-read/", methods=["GET"])
+def mark_as_read():
+    checks.check_csrf_from_param()
+    checks.check_login()
+
+    book_id = request.args.get("id")
+    user_id = cast(int, session["user_id"])
+    if not book_id or not user_id:
+        abort(400)
+
+    library.mark_as_read(user_id, int(book_id))
 
     return redirect(request.referrer)
 

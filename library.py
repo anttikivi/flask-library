@@ -81,6 +81,17 @@ def create_book(isbn: str | None, name: str, author_id: int, class_id: int):
     db.execute(sql, [isbn, name, author_id, class_id])
 
 
+def mark_as_read(user_id: int, book_id: int):
+    """
+    Marks the book read by the given user.
+    """
+    sql = """
+        INSERT INTO read_books (user_id, book_id)
+        VALUES (?, ?)
+    """
+    db.execute(sql, [user_id, book_id])
+
+
 def get_user_library(user_id: int) -> int | None:
     sql = "SELECT id FROM libraries WHERE user_id = ?"
     result = db.query(sql, [user_id])
@@ -403,6 +414,22 @@ def is_owner(user_id: int, book_id: int) -> bool:
     result = db.query(sql, [user_id, book_id])
 
     return result[0]["count"] > 0 if result else False
+
+
+def is_read(user_id: int, book_id: int) -> bool:
+    """
+    Returns whether the given use has read the book.
+    """
+    sql = """
+        SELECT EXISTS(
+            SELECT 1
+            FROM read_books
+            WHERE user_id = ? AND book_id = ?
+        ) AS result
+    """
+    result = db.query(sql, [user_id, book_id])
+
+    return cast(int, result[0]["result"]) == 1
 
 
 def search_books_from_author(author_id: int, book_name: str):
