@@ -16,6 +16,7 @@ the project is developed further.
 - The user can edit their username and password.
 - Each user has their personal library that contains the books that the user
   owns. The personal library is displayed on the user page.
+  - There is a page for each user that displays the books read by the user.
 - The user can create new books, delete book ownerships and edit book
   information.
   - The books can be classified using the
