@@ -786,7 +786,7 @@ def get_reviews(book_id: int) -> Sequence[Review]:
         JOIN users AS u ON u.id = r.user_id
         JOIN books AS b ON b.id = r.book_id
         WHERE r.book_id = ?
-        ORDER BY r.time
+        ORDER BY r.last_edited DESC, r.time DESC, username ASC
     """
     result = db.query(sql, [book_id])
 
