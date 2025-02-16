@@ -561,6 +561,11 @@ def book_page(book_id: int):
         else False
     )
     reviews = library.get_reviews(book_id)
+    has_left_review = (
+        library.has_left_review(cast(int, session["user_id"]), book_id)
+        if "user_id" in session
+        else False
+    )
     return render_template(
         "book.html",
         author=book_author,
@@ -571,6 +576,7 @@ def book_page(book_id: int):
         owned_count=owned_count,
         has_read=is_read,
         reviews=reviews,
+        has_left_review=has_left_review,
         **context,
     )
 
@@ -947,6 +953,32 @@ def mark_as_read():
         abort(400)
 
     library.mark_as_read(user_id, int(book_id))
+
+    return redirect(request.referrer)
+
+
+@app.route("/add-review/", methods=["POST"])
+def add_review():
+    checks.check_csrf()
+    checks.check_login()
+
+    print("book id arg", request.args.get("id"))
+    book_id = request.args.get("id")
+    user_id = cast(int, session["user_id"])
+    if not book_id or not user_id:
+        abort(400)
+
+    stars: int | None = (
+        int(request.form["stars"]) if "stars" in request.form else None
+    )
+    if not stars:
+        flash("Sinun tulee antaa tähtien määrä", "error")
+        return redirect(f"/kirja/{int(book_id)}")
+
+    message: str | None = (
+        request.form["message"] if "message" in request.form else None
+    )
+    library.add_review(user_id, int(book_id), stars, message)
 
     return redirect(request.referrer)
 

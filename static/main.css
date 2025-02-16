@@ -315,9 +315,17 @@ a.button:focus {
   margin: 2rem auto;
 }
 
+.book-page h3.subtitle {
+  font-size: 1.5rem;
+}
+
 @media (min-width: 768px) {
   .subtitle {
     font-size: 2.5rem;
+  }
+
+  .book-page h3.subtitle {
+    font-size: 2rem;
   }
 }
 

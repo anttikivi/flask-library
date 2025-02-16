@@ -124,6 +124,8 @@ def add_review(
         INSERT INTO reviews (user_id, book_id, stars, message, time)
         VALUES (?, ?, ?, ?, datetime('now'))
     """
+    print("User id", user_id)
+    print("Book id", book_id)
     db.execute(sql, [user_id, book_id, stars, message])
 
 
@@ -781,3 +783,19 @@ def get_reviews(book_id: int) -> Sequence[Review]:
             abort(500)
 
     return reviews
+
+
+def has_left_review(user_id: int, book_id: int) -> bool:
+    """
+    Returns whether the given use has left a review for the given book.
+    """
+    sql = """
+        SELECT EXISTS(
+            SELECT 1
+            FROM reviews
+            WHERE user_id = ? AND book_id = ?
+        ) AS result
+    """
+    result = db.query(sql, [user_id, book_id])
+
+    return cast(int, result[0]["result"]) == 1

@@ -63,5 +63,73 @@
         toiminnot.
       </p>
     {% endif %}
+
+    <h2 class="subtitle">Arvostelut</h2>
+    {% for r in reviews %}
+      {{ r.user.username }}
+    {% else %}
+      <p class="book-info">Ei vielä yhtään arvostelua.</p>
+    {% endfor %}
+
+    {% if session.user_id %}
+      {% if has_read and not has_left_review %}
+        <h3 class="subtitle">Lisää arvostelu</h3>
+        <div class="register-form-wrapper">
+          <form
+            class="register-form edit-form"
+            action="/add-review?id={{- book.id -}}"
+            method="POST"
+          >
+            {% with errors = get_flashed_messages(category_filter=["error"]) %}
+              {% if errors %}
+                <h3 class="sr-only">Lomakkeessa olleet virheet</h3>
+                <ul class="flashes">
+                  {% for msg in errors %}
+                    <li class="error">{{ msg }}</li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+              <div>
+                <label
+                  {{ ' class="label-error"' | safe if "tähti" in errors | first | lower else "" }}
+                  for="stars"
+                >
+                  <span>Tähtiä</span>
+                  <select id="stars" name="stars" required>
+                    <option value="1">1/5</option>
+                    <option value="2">2/5</option>
+                    <option value="3">3/5</option>
+                    <option value="4">4/5</option>
+                    <option value="5">5/5</option>
+                  </select>
+                </label>
+              </div>
+              <div>
+                <label for="message">
+                  <span>Kirjoita arvio</span>
+                  <textarea
+                    id="message"
+                    name="message"
+                    rows="5"
+                    cols="60"
+                  ></textarea>
+                </label>
+              </div>
+              {% include "csrf_token.html" %}
+              <button type="submit">Lisää arvostelusi</button>
+            {% endwith %}
+          </form>
+        </div>
+      {% elif has_left_review %}
+        <p class="book-info">
+          Olet jo arvostellut kirjan. Voit tulevaisuudessa muokata arvosteluasi.
+        </p>
+      {% else %}
+        <p class="book-info">
+          Tämä on vastuullinen kirjasto, sinun tulee lukea kirja ennen kuin voit
+          jättää arvostelun.
+        </p>
+      {% endif %}
+    {% endif %}
   </div>
 {% endblock %}
