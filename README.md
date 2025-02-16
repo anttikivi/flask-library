@@ -23,6 +23,8 @@ the project is developed further.
 - The user can see the books in all of the libraries.
 - The user can search books by their name.
 - User can add any book already in the database to their library.
+- User can mark books as read.
+- Users can leave, edit and delete reviews for books they’ve read.
 
 Planned features are tracked in
 [this project](https://github.com/users/anttikivi/projects/9).
