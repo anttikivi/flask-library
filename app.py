@@ -567,10 +567,13 @@ def book_page(book_id: int):
         if "user_id" in session
         else False
     )
-    fmt_times: Mapping[int, str] = {}
     _ = locale.setlocale(locale.LC_TIME, "fi_FI")
+    fmt_times: Mapping[int, str] = {}
     for r in reviews:
         fmt_times[r.id] = r.timestamp.strftime("%A %d.%m.%Y klo %H.%M")
+    fmt_last_edited: Mapping[int, str] = {}
+    for r in reviews:
+        fmt_last_edited[r.id] = r.last_edited.strftime("%A %d.%m.%Y klo %H.%M")
     return render_template(
         "book.html",
         author=book_author,
@@ -583,6 +586,7 @@ def book_page(book_id: int):
         reviews=reviews,
         has_left_review=has_left_review,
         fmt_times=fmt_times,
+        fmt_last_edited=fmt_last_edited,
         **context,
     )
 

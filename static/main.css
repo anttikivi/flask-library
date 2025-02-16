@@ -867,6 +867,10 @@ main .title:first-of-type {
   font-style: italic;
 }
 
+.book-page .review .last-edited {
+  font-size: 0.9rem;
+}
+
 .book-page .review .stars {
   display: flex;
   justify-content: center;

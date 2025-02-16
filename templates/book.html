@@ -87,8 +87,21 @@
           {% endfor %}
         </div>
         <time datetime="{{- r.timestamp -}}">{{- fmt_times[r.id] -}}</time>
+        {% if r.last_edited != r.timestamp %}
+          <div class="last-edited">
+            <span>Viimeksi muokattu:</span>{{ " " }}<time
+              datetime="{{- r.last_edited -}}"
+              >{{- fmt_last_edited[r.id] -}}</time
+            >
+          </div>
+        {% endif %}
         {% if r.msg %}
           <p>{{- r.msg -}}</p>
+        {% endif %}
+        {% if session.user_id and r.user.id == session.user_id %}
+          <a href="/kirja/{{- book.id -}}/muokkaa-arvostelua"
+            >Muokkaa arvosteluasi</a
+          >
         {% endif %}
       </div>
       <hr />
@@ -147,11 +160,16 @@
         </div>
       {% elif has_left_review %}
         <p class="book-info">
-          Olet jo arvostellut kirjan. Voit tulevaisuudessa muokata arvosteluasi.
+          Olet jo arvostellut kirjan. Voit muokata arvosteluasi.
         </p>
+        <div class="book-edit-buttons">
+          <a class="button" href="/kirja/{{- book.id -}}/muokkaa-arvostelua"
+            >Muokkaa arvosteluasi</a
+          >
+        </div>
       {% else %}
         <p class="book-info">
-          Tämä on vastuullinen kirjasto, sinun tulee lukea kirja ennen kuin voit
+          Tämä on vastuullinen kirjasto. Sinun tulee lukea kirja ennen kuin voit
           jättää arvostelun.
         </p>
       {% endif %}
