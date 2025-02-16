@@ -29,7 +29,14 @@
         {% endfor %}
       </div>
       <time datetime="{{- review.timestamp -}}">{{- fmt_time -}}</time>
-      <p>Viimeksi muokattu:{{- " " -}}{{- fmt_last_edited -}}</p>
+      {% if review.last_edited != review.timestamp %}
+        <div class="last-edited">
+          <span>Viimeksi muokattu:</span>{{ " " }}<time
+            datetime="{{- review.last_edited -}}"
+            >{{- fmt_last_edited -}}</time
+          >
+        </div>
+      {% endif %}
       {% if review.msg %}
         <p>{{- review.msg -}}</p>
       {% endif %}
