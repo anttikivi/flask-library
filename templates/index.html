@@ -70,6 +70,20 @@
                 </div>
               {% endif %}
             {% endfor %}
+            {% set ns = namespace(count=0) %}
+            {% for r in read_books %}
+              {% if r.id == book.id %}
+                {% set ns.count = 1 %}
+              {% endif %}
+            {% endfor %}
+            {% if ns.count == 0 %}
+              <div>
+                <a
+                  href="/mark-as-read?id={{- book.id -}}&token={{- session.csrf_token -}}"
+                  >Merkitse luetuksi</a
+                >
+              </div>
+            {% endif %}
           {% endif %}
         </div>
       {% endfor %}

@@ -15,6 +15,15 @@ class Book:
 
 
 @dataclass
+class JointBook:
+    id: int
+    isbn: str | None
+    name: str
+    author: str
+    classification: str
+
+
+@dataclass
 class CountBook:
     id: int
     isbn: str | None
@@ -319,6 +328,48 @@ def get_owned_books(user_id: int) -> Sequence[CountBook]:
                 author=b["author"],
                 classification=b["classification"],
                 count=b["total"],
+            )
+        )
+
+    return books
+
+
+def get_read_books(user_id: int) -> Sequence[JointBook]:
+    """
+    Returns the books read by the given user.
+    """
+    sql = """
+        SELECT
+            b.id,
+            b.isbn,
+            b.name,
+            IFNULL(a.first_name, '') || ' ' || a.surname AS author,
+            c.label AS classification
+        FROM books AS b
+        JOIN read_books AS r ON b.id = r.book_id
+        JOIN authors AS a ON b.author_id = a.id
+        JOIN classification AS c ON b.class_id = c.id
+        WHERE r.user_id = ?
+        ORDER BY
+            c.key ASC,
+            a.surname ASC,
+            a.first_name ASC,
+            b.name ASC,
+            c.key ASC,
+            c.label ASC
+    """
+
+    result = db.query(sql, [user_id])
+
+    books: list[JointBook] = []
+    for b in cast(Sequence[CountBooksResult], result):
+        books.append(
+            JointBook(
+                id=b["id"],
+                isbn=b["isbn"],
+                name=b["name"],
+                author=b["author"],
+                classification=b["classification"],
             )
         )
 

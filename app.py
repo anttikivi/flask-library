@@ -35,12 +35,19 @@ context = {"site": {"subtitle": "Kirjat purkissa", "title": "Flask-kirjasto"}}
 def index() -> str:
     books = library.get_popular_books(10)
     owned: Sequence[library.BookIDCounts] = []
+    read_books: Sequence[library.JointBook] = []
     if "user_id" in session:
         owned = library.get_owned_book_counts_by_id(
             cast(int, session["user_id"])
         )
+        read_books = library.get_read_books(cast(int, session["user_id"]))
     return render_template(
-        "index.html", books=books, owned=owned, is_home=True, **context
+        "index.html",
+        books=books,
+        owned=owned,
+        read_books=read_books,
+        is_home=True,
+        **context,
     )
 
 
@@ -89,6 +96,9 @@ def user_page(username: str, page: int | None):
     books = library.get_owned_books_paginated(user.id, page, page_size)
     owned: Sequence[library.BookIDCounts] = []
     owned = library.get_owned_book_counts_by_id(user.id)
+    read_books: Sequence[library.JointBook] = []
+    if "user_id" in session:
+        read_books = library.get_read_books(cast(int, session["user_id"]))
 
     grand_total = library.get_user_grand_total_books(user.id)
 
@@ -102,6 +112,7 @@ def user_page(username: str, page: int | None):
         page_size=page_size,
         add_per_page_param=add_per_page_param,
         owned=owned,
+        read_books=read_books,
         **context,
     )
 
@@ -375,10 +386,12 @@ def library_page(page: int | None):
 
     books = library.get_books(page, page_size)
     owned: Sequence[library.BookIDCounts] = []
+    read_books: Sequence[library.JointBook] = []
     if "user_id" in session:
         owned = library.get_owned_book_counts_by_id(
             cast(int, session["user_id"])
         )
+        read_books = library.get_read_books(cast(int, session["user_id"]))
 
     return render_template(
         "library.html",
@@ -388,6 +401,7 @@ def library_page(page: int | None):
         page_size=page_size,
         add_per_page_param=add_per_page_param,
         owned=owned,
+        read_books=read_books,
         **context,
     )
 
@@ -475,10 +489,12 @@ def library_search(page: int | None):
     )
 
     owned: Sequence[library.BookIDCounts] = []
+    read_books: Sequence[library.JointBook] = []
     if "user_id" in session:
         owned = library.get_owned_book_counts_by_id(
             cast(int, session["user_id"])
         )
+        read_books = library.get_read_books(cast(int, session["user_id"]))
 
     search_params = params[1:]
 
@@ -499,6 +515,7 @@ def library_search(page: int | None):
         owned=owned,
         search_params=search_params,
         form_data=form_data,
+        read_books=read_books,
         **context,
     )
 
