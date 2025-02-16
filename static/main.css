@@ -863,6 +863,7 @@ main .title:first-of-type {
 }
 
 .book-page .review time {
+  font-size: 0.9rem;
   font-style: italic;
 }
 
