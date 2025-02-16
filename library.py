@@ -58,6 +58,7 @@ class Review:
     stars: int
     msg: str | None
     timestamp: datetime
+    last_edited: datetime
 
 
 BooksResult = TypedDict(
@@ -100,6 +101,7 @@ ReviewResult = TypedDict(
         "stars": int,
         "message": str | None,
         "time": str,
+        "last_edited": str,
     },
 )
 
@@ -131,9 +133,21 @@ def add_review(
         )
         VALUES (?, ?, ?, ?, datetime('now'), datetime('now'))
     """
-    print("User id", user_id)
-    print("Book id", book_id)
     db.execute(sql, [user_id, book_id, stars, message])
+
+
+def update_review(
+    user_id: int, book_id: int, stars: int, message: str | None = None
+):
+    sql = """
+        UPDATE reviews
+        SET
+            stars = ?,
+            message = ?,
+            last_edited = datetime('now')
+        WHERE user_id = ? AND book_id = ?
+    """
+    db.execute(sql, [stars, message, user_id, book_id])
 
 
 def mark_as_read(user_id: int, book_id: int):
@@ -761,7 +775,8 @@ def get_reviews(book_id: int) -> Sequence[Review]:
             r.book_id,
             r.stars,
             r.message,
-            r.time
+            r.time,
+            r.last_edited
         FROM reviews AS r
         JOIN users AS u ON u.id = r.user_id
         JOIN books AS b ON b.id = r.book_id
@@ -783,6 +798,9 @@ def get_reviews(book_id: int) -> Sequence[Review]:
                     timestamp=datetime.strptime(
                         r["time"], "%Y-%m-%d %H:%M:%S"
                     ),
+                    last_edited=datetime.strptime(
+                        r["last_edited"], "%Y-%m-%d %H:%M:%S"
+                    ),
                 )
             )
         except ValueError:
@@ -790,6 +808,49 @@ def get_reviews(book_id: int) -> Sequence[Review]:
             abort(500)
 
     return reviews
+
+
+def get_user_review(book_id: int, user_id: int) -> Review | None:
+    """
+    Returns the reviews for a book.
+    """
+    sql = """
+        SELECT
+            r.id,
+            r.user_id,
+            u.username AS username,
+            r.book_id,
+            r.stars,
+            r.message,
+            r.time,
+            r.last_edited
+        FROM reviews AS r
+        JOIN users AS u ON u.id = r.user_id
+        JOIN books AS b ON b.id = r.book_id
+        WHERE r.book_id = ? AND r.user_id = ?
+    """
+    result = db.query(sql, [book_id, user_id])
+
+    review: Review | None = None
+    if result:
+        r = cast(ReviewResult, result[0])
+        try:
+            review = Review(
+                id=r["id"],
+                user=users.User(id=r["user_id"], username=r["username"]),
+                book_id=r["book_id"],
+                stars=r["stars"],
+                msg=r["message"],
+                timestamp=datetime.strptime(r["time"], "%Y-%m-%d %H:%M:%S"),
+                last_edited=datetime.strptime(
+                    r["last_edited"], "%Y-%m-%d %H:%M:%S"
+                ),
+            )
+        except ValueError:
+            print("Invalid time format found in the database")
+            abort(500)
+
+    return review
 
 
 def has_left_review(user_id: int, book_id: int) -> bool:

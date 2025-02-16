@@ -918,6 +918,29 @@ def edit_book_classification(book_id: int):
     )
 
 
+@app.route("/kirja/<int:book_id>/muokkaa-arvostelua/", methods=["GET"])
+def edit_review(book_id: int):
+    checks.check_login()
+    book = library.get_book_by_id(book_id)
+    if not book:
+        abort(404)
+
+    review = library.get_user_review(book.id, cast(int, session["user_id"]))
+    if not review:
+        abort(404)
+    _ = locale.setlocale(locale.LC_TIME, "fi_FI")
+    fmt_time: str = review.timestamp.strftime("%A %d.%m.%Y klo %H.%M")
+    fmt_last_edited: str = review.last_edited.strftime("%A %d.%m.%Y klo %H.%M")
+    return render_template(
+        "edit_review.html",
+        book=book,
+        review=review,
+        fmt_time=fmt_time,
+        fmt_last_edited=fmt_last_edited,
+        **context,
+    )
+
+
 @app.route("/add-one-book/", methods=["GET"])
 def add_one_book():
     checks.check_csrf_from_param()
@@ -989,6 +1012,34 @@ def add_review():
     library.add_review(user_id, int(book_id), stars, message)
 
     return redirect(request.referrer)
+
+
+@app.route("/update-review/", methods=["POST"])
+def update_review():
+    checks.check_csrf()
+    checks.check_login()
+
+    book_id = request.args.get("id")
+    user_id = cast(int, session["user_id"])
+    if not book_id or not user_id:
+        abort(400)
+
+    if not library.get_user_review(int(book_id), user_id):
+        abort(400)
+
+    stars: int | None = (
+        int(request.form["stars"]) if "stars" in request.form else None
+    )
+    if not stars:
+        flash("Sinun tulee antaa tähtien määrä", "error")
+        return redirect(f"/kirja/{int(book_id)}")
+
+    message: str | None = (
+        request.form["message"] if "message" in request.form else None
+    )
+    library.update_review(user_id, int(book_id), stars, message)
+
+    return redirect(f"/kirja/{book_id}")
 
 
 @app.errorhandler(401)
