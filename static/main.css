@@ -89,6 +89,12 @@ input {
   outline: none;
 }
 
+hr {
+  width: 100%;
+  border-top: 1px solid currentColor;
+  margin-bottom: 2rem;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -844,4 +850,25 @@ main .title:first-of-type {
   .search-form button[type="submit"]:focus {
     color: var(--color-purple-400);
   }
+}
+
+.book-page .review {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  row-gap: 1rem;
+  margin: 2rem auto;
+  text-align: center;
+}
+
+.book-page .review .stars {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.book-page .review .stars svg {
+  width: 1.2rem;
+  height: 1.2rem;
 }
