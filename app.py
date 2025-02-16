@@ -1,7 +1,8 @@
+import locale
 import math
 import os
 import secrets
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from typing import cast
 
 from flask import (
@@ -566,6 +567,10 @@ def book_page(book_id: int):
         if "user_id" in session
         else False
     )
+    fmt_times: Mapping[int, str] = {}
+    _ = locale.setlocale(locale.LC_TIME, "fi_FI")
+    for r in reviews:
+        fmt_times[r.id] = r.timestamp.strftime("%A %d.%m.%Y klo %H.%M")
     return render_template(
         "book.html",
         author=book_author,
@@ -577,6 +582,7 @@ def book_page(book_id: int):
         has_read=is_read,
         reviews=reviews,
         has_left_review=has_left_review,
+        fmt_times=fmt_times,
         **context,
     )
 

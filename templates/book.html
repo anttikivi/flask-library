@@ -86,7 +86,7 @@
             </svg>
           {% endfor %}
         </div>
-        <time datetime="{{- r.timestamp -}}">{{- r.timestamp -}}</time>
+        <time datetime="{{- r.timestamp -}}">{{- fmt_times[r.id] -}}</time>
         {% if r.msg %}
           <p>{{- r.msg -}}</p>
         {% endif %}
