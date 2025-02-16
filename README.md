@@ -101,6 +101,7 @@ The migrations are numbered in the order you should run them. For example, you
 might run:
 
     sqlite3 database.db < migrations/001_create_read_table.sql
+    sqlite3 database.db < migrations/002_create_reviews_table.sql
 
 ### Create the secret key
 
