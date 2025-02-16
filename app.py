@@ -968,10 +968,12 @@ def add_review():
     checks.check_csrf()
     checks.check_login()
 
-    print("book id arg", request.args.get("id"))
     book_id = request.args.get("id")
     user_id = cast(int, session["user_id"])
     if not book_id or not user_id:
+        abort(400)
+
+    if library.get_user_review(int(book_id), user_id):
         abort(400)
 
     stars: int | None = (
