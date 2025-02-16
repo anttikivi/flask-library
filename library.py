@@ -121,8 +121,15 @@ def add_review(
     user_id: int, book_id: int, stars: int, message: str | None = None
 ):
     sql = """
-        INSERT INTO reviews (user_id, book_id, stars, message, time)
-        VALUES (?, ?, ?, ?, datetime('now'))
+        INSERT INTO reviews (
+            user_id,
+            book_id,
+            stars,
+            message,
+            time,
+            last_edited
+        )
+        VALUES (?, ?, ?, ?, datetime('now'), datetime('now'))
     """
     print("User id", user_id)
     print("Book id", book_id)
