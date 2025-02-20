@@ -105,6 +105,7 @@ might run:
 
     sqlite3 database.db < migrations/001_create_read_table.sql
     sqlite3 database.db < migrations/002_create_reviews_table.sql
+    sqlite3 database.db < 003_alter_review_timestamp_not_null.sql
 
 ### Create the secret key
 
