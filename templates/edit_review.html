@@ -38,7 +38,7 @@
         </div>
       {% endif %}
       {% if review.msg %}
-        <p>{{- review.msg -}}</p>
+        <p>{{- review.msg | lines -}}</p>
       {% endif %}
     </div>
     <h2 class="subtitle">Muokkaa arvosteluasi</h2>

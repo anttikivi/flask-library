@@ -96,7 +96,7 @@
           </div>
         {% endif %}
         {% if r.msg %}
-          <p>{{- r.msg -}}</p>
+          <p>{{- r.msg | lines -}}</p>
         {% endif %}
         {% if session.user_id and r.user.id == session.user_id %}
           <a href="/kirja/{{- book.id -}}/muokkaa-arvostelua"

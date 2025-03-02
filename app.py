@@ -5,6 +5,7 @@ import secrets
 from collections.abc import Mapping, Sequence
 from typing import cast
 
+import markupsafe
 from flask import (
     Flask,
     abort,
@@ -1124,6 +1125,11 @@ def remove_review():
     return redirect(request.referrer)
 
 
+########################################################################
+# ERROR HANDLERS
+########################################################################
+
+
 @app.errorhandler(401)
 def handle_unauthorized(_: object):
     return render_template("401.html", **context), 401
@@ -1142,3 +1148,18 @@ def handle_not_found(_: object):
 @app.errorhandler(500)
 def handle_internal_server_error(_: object):
     return render_template("500.html", **context), 500
+
+
+########################################################################
+# FILTERS
+########################################################################
+
+
+@app.template_filter()
+def lines(s: str) -> str:
+    """
+    Jinja filter for converting newlines in text to HTML line breaks.
+    """
+    s = str(markupsafe.escape(s))
+    s = s.replace("\n", "<br>")
+    return markupsafe.Markup(s)
