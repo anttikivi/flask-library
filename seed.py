@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 
+import random
 import sqlite3
 
 USER_COUNT = 10000
 AUTHOR_COUNT = 10**6
+BOOK_PER_AUTHOR_COUNT = 10
 
 if __name__ == "__main__":
     db = sqlite3.connect("database.db")
@@ -38,6 +40,23 @@ if __name__ == "__main__":
 
     for a in authors:
         _ = db.execute(sql, [a[0], a[1]])
+
+    _ = db.execute("DELETE FROM books")
+
+    sql = "INSERT INTO books (isbn, name, author_id, class_id) VALUES "
+    values = ["(?, ?, ?, ?)"] * BOOK_PER_AUTHOR_COUNT
+    sql += ", ".join(values)
+
+    for i in range(1, AUTHOR_COUNT + 1):
+        params: list[str | int] = []
+        for j in range(1, BOOK_PER_AUTHOR_COUNT + 1):
+            id = str((i + j) * i * j)
+            params.append(id)
+            params.append("book" + id)
+            params.append(i)
+            params.append(random.randint(1, 2000))
+        print("Adding books for author", i)
+        _ = db.execute(sql, params)
 
     db.commit()
     db.close()
