@@ -6,6 +6,7 @@ import sqlite3
 USER_COUNT = 10000
 AUTHOR_COUNT = 10**6
 BOOK_PER_AUTHOR_COUNT = 10
+REVIEW_COUNT = 10**5
 
 if __name__ == "__main__":
     db = sqlite3.connect("database.db")
@@ -55,8 +56,24 @@ if __name__ == "__main__":
             params.append("book" + id)
             params.append(i)
             params.append(random.randint(1, 2000))
-        print("Adding books for author", i)
         _ = db.execute(sql, params)
+
+    _ = db.execute("DELETE FROM reviews")
+
+    sql = """
+        INSERT INTO reviews (
+            user_id,
+            book_id,
+            stars,
+            message,
+            time,
+            last_edited
+        )
+        VALUES (?, ?, ?, ?, datetime('now'), datetime('now'))
+    """
+
+    for i in range(1, REVIEW_COUNT + 1):
+        _ = db.execute(sql, [1, 1, random.randint(1, 5), "message " + str(i)])
 
     db.commit()
     db.close()

@@ -107,6 +107,7 @@ might run:
     sqlite3 database.db < migrations/002_create_reviews_table.sql
     sqlite3 database.db < migrations/003_alter_review_timestamp_not_null.sql
     sqlite3 database.db < migrations/004_create_book_name_index.sql
+    sqlite3 database.db < migrations/005_create_review_book_id_index.sql
 
 ### Create the secret key
 
