@@ -3,6 +3,7 @@ import math
 import os
 import secrets
 from collections.abc import Mapping, Sequence
+import time
 from typing import cast
 
 import markupsafe
@@ -10,6 +11,7 @@ from flask import (
     Flask,
     abort,
     flash,
+    g,
     redirect,
     render_template,
     request,
@@ -31,6 +33,18 @@ app = Flask(__name__)
 app.secret_key = os.environ["SECRET_KEY"]
 
 context = {"site": {"subtitle": "Kirjat purkissa", "title": "Flask-kirjasto"}}
+
+
+@app.before_request
+def before_request():
+    g.start_time = time.time()
+
+
+@app.after_request
+def after_request(response: Response):
+    elapsed_time: float = round(time.time() - cast(float, g.start_time), 2)
+    print("elapsed time:", elapsed_time, "s")
+    return response
 
 
 @app.route("/", methods=["GET"])
